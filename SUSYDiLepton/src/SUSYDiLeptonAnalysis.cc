@@ -50,9 +50,9 @@ SUSYDiLeptonAnalysis::SUSYDiLeptonAnalysis(const edm::ParameterSet &iConfig)
   cut_ptfourthJet  = iConfig.getUntrackedParameter<double> ("user_pt4JetMin");
   cut_MET	   = iConfig.getUntrackedParameter<double> ("user_METMin");
   cut_bTagDiscriminator = iConfig.getUntrackedParameter<double> ("user_bTagDiscriminator");
-
-  //bJetAlgo  = iConfig.getUntrackedParameter<string> ("user_") 
-  bJetAlgo = "jetProbabilityJetTags";
+  
+  //bJetAlgo  = iConfig.getUntrackedParameter<string> ("user_bJetAlgo")
+  bJetAlgo = "jetProbabilityJetTags"; 
   
   cut_MuonPt	   = iConfig.getUntrackedParameter<double> ("acc_MuonPt");
   cut_MuonEta	   = iConfig.getUntrackedParameter<double> ("acc_MuonEta");
@@ -69,7 +69,7 @@ SUSYDiLeptonAnalysis::SUSYDiLeptonAnalysis(const edm::ParameterSet &iConfig)
   //cut_TnPhigh  = iConfig.getUntrackedParameter<double> ("tnp_high_inv");
   cut_TnPlow = 50;
   cut_TnPhigh = 120;
- 
+
   //initialize global counters
   numTotEvents = 0;
   numTotEventsAfterCuts = 0;
@@ -104,6 +104,7 @@ SUSYDiLeptonAnalysis::SUSYDiLeptonAnalysis(const edm::ParameterSet &iConfig)
   hElectronMult = new TH1F * [nHistos];
   hMuonMult = new TH1F * [nHistos];
   hJetMult = new TH1F * [nHistos];
+  hbJetMult = new TH1F * [nHistos];
 
   //histograms for lepton isolation cuts
   hElectronIso = new TH1F * [nHistos];
@@ -114,7 +115,9 @@ SUSYDiLeptonAnalysis::SUSYDiLeptonAnalysis(const edm::ParameterSet &iConfig)
   hInvMOFOS = new TH1F * [nHistos];
   hInvMass = new TH1F * [nHistos];
   hInvMElectron = new TH1F * [nHistos];
+  hInvMElectronSS = new TH1F * [nHistos];
   hInvMMuon = new TH1F * [nHistos];
+  hInvMMuonSS = new TH1F * [nHistos];
   
   hInvMbbllSFOS = new TH1F * [nHistos];
   hInvMbbllOFOS = new TH1F * [nHistos];
@@ -189,11 +192,11 @@ SUSYDiLeptonAnalysis::SUSYDiLeptonAnalysis(const edm::ParameterSet &iConfig)
 void inline SUSYDiLeptonAnalysis::InitHisto(TFileDirectory *theFile, const int process)
 {
   //TFileDirectory test = theFile->mkdir( "test" );
-  // book histograms for multiplicities of leptons and jets
   hLeptonMult[process] = theFile->make<TH1F>( "LeptonMultiplicity", "Multiplicity of electrons + muons", 15, 0.0, 15.0);
   hElectronMult[process] = theFile->make<TH1F>( "ElectronMultiplicity", "Multiplicity of electrons", 10, 0.0, 10.0);
   hMuonMult[process] = theFile->make<TH1F>( "MuonMultiplicity", "Multiplicity of muons", 10, 0.0, 10.0);
   hJetMult[process] = theFile->make<TH1F>( "JetMultiplicity", "Multiplicity of jets", 30, 0.0, 30.0);
+  hbJetMult[process] = theFile->make<TH1F>( "bJetMultiplicity", "Multiplicity of b jets", 15, 0.0, 15.0);
 
   //histograms for lepton isolation cuts
   hElectronIso[process] = theFile->make<TH1F>( "ElectronIso", "Isolation of electrons", 1000, 0.0, 10.0); 
@@ -204,7 +207,9 @@ void inline SUSYDiLeptonAnalysis::InitHisto(TFileDirectory *theFile, const int p
   hInvMOFOS[process] = theFile->make<TH1F>( "Invariant mass of OFOS lepton pairs", "Invariant mass of OFOS lepton pairs", 300, 0, 300);
   hInvMass[process] = theFile->make<TH1F>( "Invariant mass of lepton pairs", "Invariant mass of lepton pairs", 300, 0, 300);
   hInvMElectron[process] = theFile->make<TH1F>( "Invariant mass of electron pairs", "Invariant mass of electron pairs", 300, 0, 300);
+  hInvMElectronSS[process] = theFile->make<TH1F>( "Invariant mass of same sign electron pairs", "Invariant mass of same sign electron pairs", 300, 0, 300);
   hInvMMuon[process] = theFile->make<TH1F>( "Invariant mass of muon pairs", "Invariant mass of muon pairs", 300, 0, 300);
+  hInvMMuonSS[process] = theFile->make<TH1F>( "Invariant mass of same sign muon pairs", "Invariant mass of same sign muon pairs", 300, 0, 300);
   
   //histograms for bbll inv mass
   hInvMbbllSFOS[process] = theFile->make<TH1F>( "Invariant mass of SFOS bbll", "Invariant mass of SFOS bbll", 1500, 0, 1500);
@@ -263,7 +268,7 @@ void inline SUSYDiLeptonAnalysis::InitHisto(TFileDirectory *theFile, const int p
   hPtJet2[process] = theFile->make<TH1F>( "Et second jet", "Et spectrum of the 2nd jet", 1500, 0.0, 1500.0);
   hPtJet3[process] = theFile->make<TH1F>( "Et third jet", "Et spectrum of the 3rd jet", 1500, 0.0, 1500.0);
   hPtJet4[process] = theFile->make<TH1F>( "Et fourth jet", "Et spectrum of the 4th jet", 1500, 0.0, 1500.0);
-  
+ 
   hTrigger[process] = theFile->make<TH1F>( "Trigger paths", "Trigger paths", 160, 0, 160);
 
 }
@@ -280,7 +285,7 @@ SUSYDiLeptonAnalysis::~SUSYDiLeptonAnalysis()
 //Check if Electron is clean and in geometrical acceptance
 bool SUSYDiLeptonAnalysis::IsCleanMuon(const pat::Muon& muon)
 {
- //if (muon.combinedMuon()->normalizedChi2()<5&&fabs(muon.track()->d0())<0.25&&muon.track()->numberOfValidHits() >= 7&&muon.pt()>cut_MuonPt&&abs(muon.eta())<cut_MuonEta){return true;} else return false;
+ //if (muon.pt()>cut_MuonPt&&abs(muon.eta())<cut_MuonEta){return true;} else return false;
  if (muon.track()->normalizedChi2()<5&&fabs(muon.track()->d0())<0.25&&muon.track()->numberOfValidHits() >= 7&&muon.pt()>cut_MuonPt&&abs(muon.eta())<cut_MuonEta){return true;} else return false;
 }
 
@@ -478,7 +483,13 @@ void SUSYDiLeptonAnalysis::Analysis(const edm::Handle< std::vector<pat::Muon> >&
 	}
    }
    hJetMult[process]->Fill(n_Jet,weight);
+   hbJetMult[process]->Fill(n_bJet,weight);
    if (debug) cout <<" Number of Jets = " << n_Jet << endl;
+
+   //Sum of four leading jets
+   hEtSum[process]->Fill(pt4Jets,weight);
+   //Sum of four leading jets + MET
+   hHT[process]->Fill(pt4Jets+MET,weight);
    
    //Muon histograms
    int n_Muons = 0;
@@ -517,7 +528,8 @@ void SUSYDiLeptonAnalysis::Analysis(const edm::Handle< std::vector<pat::Muon> >&
 			hInvMSFOS[process]->Fill((mu_i->p4()+mu_j->p4()).M(),weight);
 			h2dMETInvMassSFOS[process]->Fill((mu_i->p4()+mu_j->p4()).M(),MET,weight);
 			h2dPtJetsInvMassSFOS[process]->Fill((mu_i->p4()+mu_j->p4()).M(),pt4Jets,weight);
-		}
+		}	
+       		if( mu_i->charge()==mu_j->charge()&&mu_i<mu_j){hInvMMuonSS[process]->Fill((mu_i->p4()+mu_j->p4()).M(),weight);}
 		}
 	}
    	//Wrong pairings for different flavour subtraction
@@ -554,6 +566,7 @@ void SUSYDiLeptonAnalysis::Analysis(const edm::Handle< std::vector<pat::Muon> >&
 	}
 	if(IsCleanElectron(*ele_i)&&IsIsolatedElectron(*ele_i)){
 	++numTotIsolatedElectrons;
+	++n_Electrons;
 	//Electron base plot
 	hElectronPt[process]->Fill(ele_i->pt(),weight);
 	hElectronEta[process]->Fill(ele_i->eta(),weight);
@@ -581,6 +594,7 @@ void SUSYDiLeptonAnalysis::Analysis(const edm::Handle< std::vector<pat::Muon> >&
 			h2dMETInvMassSFOS[process]->Fill((ele_i->p4()+ele_j->p4()).M(),MET,weight);
 			h2dPtJetsInvMassSFOS[process]->Fill((ele_i->p4()+ele_j->p4()).M(),pt4Jets,weight);
 		}
+       		if( ele_i->charge()==ele_j->charge()&&ele_i<ele_j){hInvMElectronSS[process]->Fill((ele_i->p4()+ele_j->p4()).M(),weight);}
 		}
 	}
 	}
@@ -589,7 +603,6 @@ void SUSYDiLeptonAnalysis::Analysis(const edm::Handle< std::vector<pat::Muon> >&
   //Electron multiplicity 
   hElectronMult[process]->Fill(n_Electrons,weight);
   hLeptonMult[process]->Fill(n_Muons+n_Electrons,weight);
-  
   
 }
 
@@ -639,7 +652,7 @@ void SUSYDiLeptonAnalysis::analyze(const edm::Event &iEvent, const edm::EventSet
    //retrieve the weight from CSA soups
    double weight = 1.;
    int processID = 0;
-   bool muonTnP=true;
+   bool muonTnP=false;
    if (weighted){
    	edm::Handle< double > weightHandle;
    	iEvent.getByLabel("csaweightproducer","weight", weightHandle);
@@ -706,29 +719,29 @@ void SUSYDiLeptonAnalysis::MCAnalysis(const edm::Handle< std::vector<pat::Muon> 
   float metx = 0;
   float mety = 0;
   for (std::vector<reco::GenParticle>::const_iterator p_i = genParticles->begin(); p_i != genParticles->end(); ++p_i){
-        pid = abs(p_i->pdgId());
-        if (p_i->status()==1){
-                //Muons (13) with status 1
-                if (p_i->pt()>cut_MuonPt&&abs(p_i->eta())<cut_MuonEta&&pid==13){
-                        hGenMuonPt[process]->Fill(p_i->pt(),weight);
-                        hGenMuonEta[process]->Fill(p_i->eta(),weight);
-                        h2dGenMuonEtaPt[process]->Fill(p_i->pt(),p_i->eta(),weight);
-               }
-                //Electron (11) with status 1
-                if (p_i->pt()>cut_ElectronPt&&abs(p_i->eta())<cut_ElectronEta&&abs(p_i->pdgId())==11&&p_i->status()==1){
-                        hGenElectronPt[process]->Fill(p_i->pt(),weight);
-                        hGenElectronEta[process]->Fill(p_i->eta(),weight);
-                        h2dGenElectronEtaPt[process]->Fill(p_i->pt(),p_i->eta(),weight);
-                }
-                if (    pid == 12 || pid == 13 || pid == 14 || pid == 16 || 
-                        pid == 1000022 || pid == 2000012 || pid == 2000014 ||
-                        pid == 2000016 || pid == 1000039 || pid == 5000039 ||
-                        pid == 4000012 || pid == 9900012 || pid == 9900014 ||
-                        pid == 9900016 || pid == 39 ){
-                        metx += p_i->px();
-                        mety += p_i->py();
-                }
-        }
+	pid = abs(p_i->pdgId());
+	if (p_i->status()==1){
+		//Muons (13) with status 1
+ 		if (p_i->pt()>cut_MuonPt&&abs(p_i->eta())<cut_MuonEta&&pid==13){
+			hGenMuonPt[process]->Fill(p_i->pt(),weight);
+			hGenMuonEta[process]->Fill(p_i->eta(),weight);
+        		h2dGenMuonEtaPt[process]->Fill(p_i->pt(),p_i->eta(),weight);
+ 	       }
+		//Electron (11) with status 1
+ 		if (p_i->pt()>cut_ElectronPt&&abs(p_i->eta())<cut_ElectronEta&&abs(p_i->pdgId())==11&&p_i->status()==1){
+			hGenElectronPt[process]->Fill(p_i->pt(),weight);
+			hGenElectronEta[process]->Fill(p_i->eta(),weight);
+    			h2dGenElectronEtaPt[process]->Fill(p_i->pt(),p_i->eta(),weight);
+        	}
+ 		if ( 	pid == 12 || pid == 13 || pid == 14 || pid == 16 || 
+			pid == 1000022 || pid == 2000012 || pid == 2000014 ||
+			pid == 2000016 || pid == 1000039 || pid == 5000039 ||
+			pid == 4000012 || pid == 9900012 || pid == 9900014 ||
+			pid == 9900016 || pid == 39 ){
+			metx += p_i->px();
+			mety += p_i->py();
+		}
+	}
   }
   hMissingETmc[process]->Fill(sqrt(metx*metx+mety*mety),weight);
 }

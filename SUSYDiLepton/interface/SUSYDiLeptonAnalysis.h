@@ -70,6 +70,7 @@ class SUSYDiLeptonAnalysis : public edm::EDAnalyzer {
         TH1F**       hElectronMult;
         TH1F**       hMuonMult;
         TH1F**       hJetMult;
+        TH1F**       hbJetMult;
 
         TH1F**       hElectronIso;
         TH1F**       hMuonIso;
@@ -94,7 +95,9 @@ class SUSYDiLeptonAnalysis : public edm::EDAnalyzer {
         TH1F**       hInvMOFOS;
         TH1F**       hInvMass;
         TH1F**       hInvMMuon;
+        TH1F**       hInvMMuonSS;
         TH1F**       hInvMElectron;
+        TH1F**       hInvMElectronSS;
         
         TH1F**       hInvMbbllSFOS;
         TH1F**       hInvMbbllOFOS;
@@ -134,7 +137,7 @@ class SUSYDiLeptonAnalysis : public edm::EDAnalyzer {
         TH1F**       hTrigger;
 
     // The file which will store the histos
-    //TFile *theFile;
+    TFile *theFile;
 
     // Switch for debug output
     bool debug;
