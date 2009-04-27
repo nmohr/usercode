@@ -10,7 +10,7 @@
 
 <flags EDM_PLUGIN=1>
 <export>
- <lib name=TestSystemSUSYDiLepton>
+ <lib name=NiklasMohrSUSYDiLepton>
  <use name=boost>
  <use name=FWCore/Framework>
  <use name=FWCore/ParameterSet>
