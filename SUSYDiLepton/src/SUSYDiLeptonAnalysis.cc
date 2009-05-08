@@ -66,6 +66,8 @@ SUSYDiLeptonAnalysis::SUSYDiLeptonAnalysis(const edm::ParameterSet &iConfig)
     cut_MuonChi2   = iConfig.getUntrackedParameter<double> ("acc_MuonChi2");
     cut_Muond0 	   = iConfig.getUntrackedParameter<double> ("acc_Muond0");
     cut_MuonnHits  = iConfig.getUntrackedParameter<double> ("acc_MuonnHits");
+    cut_MuonHCALIso = iConfig.getUntrackedParameter<double> ("iso_MuonHCALIso",9999999999.);
+    cut_MuonECALIso = iConfig.getUntrackedParameter<double> ("iso_MuonECALIso",9999999999.);
     cut_MuonIso	   = iConfig.getUntrackedParameter<double> ("iso_MuonIso");
   
     ElectronID = iConfig.getUntrackedParameter<string> ("user_ElectronID");
@@ -76,6 +78,8 @@ SUSYDiLeptonAnalysis::SUSYDiLeptonAnalysis(const edm::ParameterSet &iConfig)
   
     cut_JetPt  = iConfig.getUntrackedParameter<double> ("acc_JetPt");
     cut_JetEta  = iConfig.getUntrackedParameter<double> ("acc_JetEta");
+    cut_JetEMF  = iConfig.getUntrackedParameter<double> ("acc_JetEMF",0.);
+    cut_JetHEF  = iConfig.getUntrackedParameter<double> ("acc_JetHEF",0.);
   
     methodTnP     = iConfig.getUntrackedParameter<string>   ("tnp_method");
     cut_TnPChi  = iConfig.getUntrackedParameter<double>   ("tnp_probe_chi2",100);
@@ -455,11 +459,13 @@ void SUSYDiLeptonAnalysis::ReadEfficiency(){
 bool SUSYDiLeptonAnalysis::IsCleanMuon(const pat::Muon& muon)
 {
     if(!muon.innerTrack().isNull()&&muon.isGlobalMuon()){
-        if (muon.pt()>cut_MuonPt &&
-                abs(muon.eta())<cut_MuonEta &&
-                muon.innerTrack()->normalizedChi2()<cut_MuonChi2 &&
+        if (muon.pt()>=cut_MuonPt &&
+                abs(muon.eta())<=cut_MuonEta &&
+                muon.globalTrack()->normalizedChi2()<cut_MuonChi2 &&
                 muon.innerTrack()->numberOfValidHits()>=cut_MuonnHits &&
-                abs(muon.innerTrack()->dxy(bs))<cut_Muond0
+                abs(muon.innerTrack()->dxy(bs))<cut_Muond0 &&
+                muon.hcalIsoDeposit()->candEnergy() < cut_MuonHCALIso &&
+                muon.ecalIsoDeposit()->candEnergy() < cut_MuonECALIso 
                 )
                 {return true;} else return false;
     }
@@ -471,8 +477,8 @@ bool SUSYDiLeptonAnalysis::IsCleanElectron(const pat::Electron& electron)
 {
     if(!electron.gsfTrack().isNull()){
         if (electron.electronID(ElectronID)==1.0 &&
-            electron.pt()>cut_ElectronPt && 
-            abs(electron.eta())<cut_ElectronEta &&
+            electron.pt()>=cut_ElectronPt && 
+            abs(electron.eta())<=cut_ElectronEta &&
             abs(electron.gsfTrack()->dxy(bs))<cut_Electrond0
             ) 
             {return true;} else return false;
@@ -483,7 +489,15 @@ bool SUSYDiLeptonAnalysis::IsCleanElectron(const pat::Electron& electron)
 //Check if Jet is not overlapping with electrons and in geometrical acceptance
 bool SUSYDiLeptonAnalysis::IsCleanJet(const pat::Jet& jet)
 {
-    if (pat::Flags::test(jet, pat::Flags::Overlap::Electrons)&&jet.pt()>cut_JetPt&&abs(jet.eta())<cut_JetEta){return true;} else return false;
+    /*if (cut_JetEMF >= 0.){
+        if (jet.emEnergyFraction()>cut_JetEMF&&jet.pt()>cut_JetPt&&abs(jet.eta())<cut_JetEta){return true;} else return false;
+    }
+    else*/
+    if (pat::Flags::test(jet, pat::Flags::Overlap::Electrons) &&
+            jet.emEnergyFraction()>cut_JetEMF &&
+            jet.energyFractionHadronic()>cut_JetHEF &&
+            jet.pt()>cut_JetPt &&
+            abs(jet.eta())<cut_JetEta ){return true;} else return false;
 }
 
 //calculate the isolation of a pat lepton relative sum in cone: (tracker+ecal+hcal)/lept.pt
@@ -774,6 +788,46 @@ bool SUSYDiLeptonAnalysis::LeptonCut(const edm::Handle< std::vector<pat::Muon> >
                 return true;
         } else return false;
     }
+    else if (rej_LeptonCut == "OSEMU"){
+        if (debug) cout << "Checking EMU Lepton cut: " << endl;
+        if( (n_Pos_Muons == cut_nPos_Muon && n_Neg_Electrons == cut_nNeg_Elec && n_Neg_Muons == 0 && n_Pos_Electrons == 0) ||
+            (n_Neg_Muons == cut_nNeg_Muon && n_Pos_Electrons == cut_nPos_Elec && n_Pos_Muons == 0 && n_Neg_Electrons == 0) ){
+                return true;
+        } else return false;
+    }
+    else if (rej_LeptonCut == "OSEE"){
+        if (debug) cout << "Checking EE Lepton cut: " << endl;
+        if( (n_Pos_Electrons == cut_nPos_Elec && n_Neg_Electrons == cut_nNeg_Elec) &&
+            (n_Neg_Muons == cut_nNeg_Muon && n_Pos_Muons == cut_nPos_Muon) ){
+                return true;
+        } else return false;
+    }
+    else if (rej_LeptonCut == "OSMUMU"){
+        if (debug) cout << "Checking  Lepton cut: " << endl;
+        if( (n_Neg_Muons == cut_nNeg_Muon && n_Pos_Muons == cut_nPos_Muon) && 
+            (n_Pos_Electrons == cut_nPos_Elec && n_Neg_Electrons == cut_nNeg_Elec) ){
+                return true;
+        } else return false;
+    }
+    else if (rej_LeptonCut == "SSMUMU"){
+        if (debug) cout << "Checking  Lepton cut: " << endl;
+        if( (n_Neg_Electrons == 0 && n_Pos_Electrons == 0) && ( n_Neg_Muons == 2 || n_Pos_Muons == 2 ) ){
+                return true;
+        } else return false;
+    }
+    else if (rej_LeptonCut == "SSEE"){
+        if (debug) cout << "Checking  Lepton cut: " << endl;
+        if( (n_Neg_Muons == 0 && n_Pos_Muons == 0) && ( n_Neg_Electrons == 2 || n_Pos_Electrons == 2 ) ){
+                return true;
+        } else return false;
+    }
+    else if (rej_LeptonCut == "SSEMU"){
+        if (debug) cout << "Checking EMU Lepton cut: " << endl;
+        if( (n_Pos_Muons == 1 && n_Pos_Electrons == 1 && n_Neg_Muons == 0 && n_Neg_Electrons == 0) ||
+            (n_Neg_Muons == 1 && n_Neg_Electrons == 1 && n_Pos_Muons == 0 && n_Pos_Electrons == 0) ){
+                return true;
+        } else return false;
+    }
     else if( n_Pos_Muons>=cut_nPos_Muon &&
              n_Pos_Electrons >= cut_nPos_Elec &&
              n_Neg_Muons >=cut_nNeg_Muon &&
@@ -1018,8 +1072,8 @@ void SUSYDiLeptonAnalysis::Analysis(const edm::Handle< std::vector<pat::Muon> >&
                     if(IsIsolatedElectron(*ele_i)&&IsIsolatedElectron(*ele_j)){
                         ElectronInvMonitor(inv,MET,HT,et4Jets,etFourthJet,iso,weight,general);
                         ElectronInvMonitor(inv,MET,HT,et4Jets,etFourthJet,iso,weightcorr,effcor);
-                        invMSFOS = (ele_i->p4()+ele_j->p4()).M();
-                        invMElec = (ele_i->p4()+ele_j->p4()).M();
+                        invMSFOS = inv;
+                        invMElec = inv;
                         invweight = weightcorr;
                         treeSFOS->Fill();
                         treeElec->Fill();

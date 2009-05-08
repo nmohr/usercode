@@ -246,6 +246,8 @@ class SUSYDiLeptonAnalysis : public edm::EDAnalyzer {
     double cut_MuonChi2;
     double cut_Muond0;
     double cut_MuonnHits;
+    double cut_MuonHCALIso;
+    double cut_MuonECALIso;
     double cut_MuonIso;
     
     std::string ElectronID;
@@ -256,6 +258,8 @@ class SUSYDiLeptonAnalysis : public edm::EDAnalyzer {
     
     double cut_JetPt;
     double cut_JetEta;
+    double cut_JetEMF;
+    double cut_JetHEF;
    
     std::string methodTnP; 
     double cut_TnPChi;
