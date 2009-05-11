@@ -493,11 +493,23 @@ bool SUSYDiLeptonAnalysis::IsCleanJet(const pat::Jet& jet)
         if (jet.emEnergyFraction()>cut_JetEMF&&jet.pt()>cut_JetPt&&abs(jet.eta())<cut_JetEta){return true;} else return false;
     }
     else*/
-    if (pat::Flags::test(jet, pat::Flags::Overlap::Electrons) &&
-            jet.emEnergyFraction()>cut_JetEMF &&
-            jet.energyFractionHadronic()>cut_JetHEF &&
-            jet.pt()>cut_JetPt &&
-            abs(jet.eta())<cut_JetEta ){return true;} else return false;
+    if (//pat::Flags::test(jet, pat::Flags::Overlap::Electrons) &&
+            jet.emEnergyFraction()>=cut_JetEMF &&
+            jet.energyFractionHadronic()>=cut_JetHEF &&
+            jet.pt()>=cut_JetPt &&
+            abs(jet.eta())<=cut_JetEta ){return true;} else return false;
+}
+
+bool SUSYDiLeptonAnalysis::IsIsolatedJet(const pat::Jet& jet, const edm::Handle< std::vector<pat::Electron> >& electrons)
+{
+    int nMatch = 0;
+    for (std::vector<pat::Electron>::const_iterator ele_i = electrons->begin(); ele_i != electrons->end(); ++ele_i){
+        if (IsCleanElectron(*ele_i)&&IsIsolatedElectron(*ele_i)){
+            if (reco::deltaR(jet.eta(),jet.phi(),ele_i->eta(),ele_i->phi())<0.4){++nMatch;} 
+        }
+    }
+    if (nMatch==0){return true;}
+    else return false;
 }
 
 //calculate the isolation of a pat lepton relative sum in cone: (tracker+ecal+hcal)/lept.pt
@@ -540,7 +552,7 @@ bool SUSYDiLeptonAnalysis::FindMinCombo(std::vector<const reco::Candidate*> obje
 				std::vector<unsigned int> & listb) {
  
     unsigned int n = objects.size();
-    if (n>Combinations::nmax) {LogPrint("alhpaCalc") << "FindMinDptCombo: " << n << " too big"; return false;}
+    //if (n>Combinations::nmax) {LogPrint("alhpaCalc") << "FindMinDptCombo: " << n << " too big"; return false;}
 
     lista.clear(); listb.clear(); // clears the lists, just to be sure
 
@@ -676,7 +688,7 @@ double SUSYDiLeptonAnalysis::getElectronWeight(const pat::Electron* electron)
 }
 
 //check if jets are above cuts
-bool SUSYDiLeptonAnalysis::JetCut(const edm::Handle< std::vector<pat::Jet> >& jets){
+bool SUSYDiLeptonAnalysis::JetCut(const edm::Handle< std::vector<pat::Jet> >& jets, const edm::Handle< std::vector<pat::Electron> >& electrons){
     if (debug) cout << "Checking Jet cut: " << endl;
     int n_Jet=0;
     int n_bJet=0;
@@ -688,14 +700,15 @@ bool SUSYDiLeptonAnalysis::JetCut(const edm::Handle< std::vector<pat::Jet> >& je
     bool bJets=false;
     for (std::vector<pat::Jet>::const_iterator jet_i = jets->begin(); jet_i != jets->end(); ++jet_i){       
         //Test only clean jets in acceptance
-        if(IsCleanJet(*jet_i)){
+        if(IsCleanJet(*jet_i)&&IsIsolatedJet(*jet_i,electrons)){
 	    ++n_Jet;
+            //edm::LogPrint("JET")  << "Jet " << n_Jet << ": pt = " << jet_i->pt() << ", et = " << jet_i->et() << ", eta = " << jet_i->eta() ;
 	    ptJets+=jet_i->pt()*(1+jet_Scale);
-	    if(n_Jet==1 && jet_i->pt()*(1+jet_Scale)>cut_ptfirstJet){firstJet=true;}
-	    if(n_Jet==2 && jet_i->pt()*(1+jet_Scale)>cut_ptsecondJet){secondJet=true;}
-	    if(n_Jet==3 && jet_i->pt()*(1+jet_Scale)>cut_ptthirdJet){thirdJet=true;}
-	    if(n_Jet==4 && jet_i->pt()*(1+jet_Scale)>cut_ptfourthJet){fourthJet=true;}
-	    if(jet_i->bDiscriminator(bJetAlgo)>cut_bTagDiscriminator){
+	    if(n_Jet==1 && jet_i->pt()*(1+jet_Scale)>=cut_ptfirstJet){firstJet=true;}
+	    if(n_Jet==2 && jet_i->pt()*(1+jet_Scale)>=cut_ptsecondJet){secondJet=true;}
+	    if(n_Jet==3 && jet_i->pt()*(1+jet_Scale)>=cut_ptthirdJet){thirdJet=true;}
+	    if(n_Jet==4 && jet_i->pt()*(1+jet_Scale)>=cut_ptfourthJet){fourthJet=true;}
+	    if(jet_i->bDiscriminator(bJetAlgo)>=cut_bTagDiscriminator){
 	        ++n_bJet;
 	    }
 	}
@@ -709,7 +722,7 @@ bool SUSYDiLeptonAnalysis::JetCut(const edm::Handle< std::vector<pat::Jet> >& je
     if(!rej_bTagCut){bJets = true;}
     //Check case of 1 Jet
     if (cut_nJets==0){
-        if((ptJets>cut_ptfirstJet+cut_ptsecondJet+cut_ptthirdJet+cut_ptfourthJet)&&bJets) {return true;} else return false;
+        if((ptJets>=cut_ptfirstJet+cut_ptsecondJet+cut_ptthirdJet+cut_ptfourthJet)&&bJets) {return true;} else return false;
     }
     if (cut_nJets==1){
         if(firstJet&&bJets) {return true;} else return false;
@@ -734,7 +747,7 @@ bool SUSYDiLeptonAnalysis::METCut(const edm::Handle< std::vector<pat::MET> >& me
     if (debug) cout << "Checking MET cut: " << endl;
     bool MET=false;
     double ptJets = 0.;
-    if (jet_Scale!=0.){
+    if (abs(jet_Scale)>=0.00001){
 	if (debug) cout << "Jet scaling" << endl;
         for (std::vector<pat::Jet>::const_iterator jet_i = jets->begin(); jet_i != jets->end(); ++jet_i){       
             if(IsCleanJet(*jet_i)){
@@ -744,6 +757,9 @@ bool SUSYDiLeptonAnalysis::METCut(const edm::Handle< std::vector<pat::MET> >& me
 	if (debug) cout << "ptJets = " << ptJets << endl;
     } 
     for (std::vector<pat::MET>::const_iterator met_i = met->begin(); met_i != met->end(); ++met_i){      
+        /*edm::LogPrint("MET")  << "MET px = " << met_i->px() << "\n"
+                              << "MET py = " << met_i->py() << "\n"
+                              << "MET et = " << met_i->et();*/
         if (met_i->et()-jet_Scale*ptJets>cut_MET) {MET=true;} 
     }
     if (MET) {return true;} else return false;
@@ -811,13 +827,15 @@ bool SUSYDiLeptonAnalysis::LeptonCut(const edm::Handle< std::vector<pat::Muon> >
     }
     else if (rej_LeptonCut == "SSMUMU"){
         if (debug) cout << "Checking  Lepton cut: " << endl;
-        if( (n_Neg_Electrons == 0 && n_Pos_Electrons == 0) && ( n_Neg_Muons == 2 || n_Pos_Muons == 2 ) ){
+        if( (n_Neg_Electrons == 0 && n_Pos_Electrons == 0 && n_Pos_Muons == 0 &&  n_Neg_Muons == 2 ) ||
+            (n_Neg_Electrons == 0 && n_Pos_Electrons == 0 && n_Pos_Muons == 2 &&  n_Neg_Muons == 0 ) ){
                 return true;
         } else return false;
     }
     else if (rej_LeptonCut == "SSEE"){
         if (debug) cout << "Checking  Lepton cut: " << endl;
-        if( (n_Neg_Muons == 0 && n_Pos_Muons == 0) && ( n_Neg_Electrons == 2 || n_Pos_Electrons == 2 ) ){
+        if( (n_Neg_Muons == 0 && n_Pos_Muons == 0 && n_Pos_Electrons == 0 && n_Neg_Electrons == 2 ) || 
+            (n_Neg_Muons == 0 && n_Pos_Muons == 0 && n_Pos_Electrons == 2 && n_Neg_Electrons == 0 ) ){
                 return true;
         } else return false;
     }
@@ -843,7 +861,7 @@ bool SUSYDiLeptonAnalysis::CheckCuts(const edm::Handle< std::vector<pat::Muon> >
         bool passedMETCut=false;
         bool passedLeptonCut=false;
         if (rej_JetCut){
-	    if (JetCut(jets)){
+	    if (JetCut(jets,electrons)){
 	        if (debug) cout << "Jet cut passed" << endl;
 		passedJetCut = true;
    	    } 
@@ -873,6 +891,9 @@ void SUSYDiLeptonAnalysis::Analysis(const edm::Handle< std::vector<pat::Muon> >&
     double MET=0;
     for (std::vector<pat::MET>::const_iterator met_i = met->begin(); met_i != met->end(); ++met_i){
         if (debug) cout <<"MET et = "<< met_i->et() << endl;
+        /*edm::LogPrint("MET")  << "MET px = " << met_i->px() << "\n"
+                              << "MET py = " << met_i->py() << "\n"
+                              << "MET et = " << met_i->et() << "\n";*/
         MET = met_i->et();
     }
 
@@ -1096,13 +1117,15 @@ void SUSYDiLeptonAnalysis::Analysis(const edm::Handle< std::vector<pat::Muon> >&
     if(FindMinCombo(objects,mlaMinDpt,mlbMinDpt)){alphaT =  CalcalphaT(objects,mlaMinDpt,mlbMinDpt);}
     halphaT[process]->Fill(alphaT,weight);
     //Muon multiplicity 
-    hMuonMult[process]->Fill(n_Muons,weight);
+    hMuonMult[all]->Fill(n_Muons,weight);
+    hMuonMult[clean]->Fill(n_CleanMuons,weight);
+    hMuonMult[general]->Fill(n_CleanIsoMuons,weight);
     //Electron multiplicity 
     hElectronMult[all]->Fill(n_Electrons,weight);
     hElectronMult[clean]->Fill(n_CleanElectrons,weight);
     hElectronMult[general]->Fill(n_CleanIsoElectrons,weight);
     //Lepton multiplicity
-    hLeptonMult[general]->Fill(n_Muons+n_CleanIsoElectrons,weight);
+    hLeptonMult[general]->Fill(n_CleanIsoMuons+n_CleanIsoElectrons,weight);
 }
 
 //Fill all muon inv mass related quantities
@@ -1370,6 +1393,8 @@ void SUSYDiLeptonAnalysis::MuonMonitor(const pat::Muon* muon,const int n_Muon, d
 void SUSYDiLeptonAnalysis::analyze(const edm::Event &iEvent, const edm::EventSetup &iSetup) {
     double weight = externalWeight;
 
+    //edm::LogPrint("Evt")  << "Run = " << iEvent.id().run() << ", Event = " << iEvent.id().event();
+
     //Beam spot
     edm::Handle<reco::BeamSpot> beamSpotHandle;
     iEvent.getByLabel(beamSpotSrc, beamSpotHandle);
@@ -1395,6 +1420,10 @@ void SUSYDiLeptonAnalysis::analyze(const edm::Event &iEvent, const edm::EventSet
     //Trigger 
     edm::Handle< edm::TriggerResults > trigger;
     iEvent.getByLabel("TriggerResults", trigger);
+    
+    /*if(LeptonCut(muons,electrons)&&JetCut(jets,electrons)){
+        edm::LogPrint("Evt")  << "Run = " << iEvent.id().run() << ", Event = " << iEvent.id().event();
+    }*/
 
     bool signal = false;
     ++numTotEvents;
@@ -1427,6 +1456,10 @@ void SUSYDiLeptonAnalysis::analyze(const edm::Event &iEvent, const edm::EventSet
             ElectronTnP(electrons, tracks, weight, general);
         }
     } 
+    /*if(LeptonCut(muons,electrons)&&JetCut(jets,electrons)){
+        if(METCut(met,jets)){edm::LogPrint("MET")  << "MET cut passed";}
+        else edm::LogPrint("MET")  << "MET cut failed";
+    }*/
 }
 
 

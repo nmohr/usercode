@@ -320,7 +320,7 @@ class SUSYDiLeptonAnalysis : public edm::EDAnalyzer {
 
     virtual bool CheckCuts(const edm::Handle< std::vector<pat::Muon> >&, const edm::Handle< std::vector<pat::Electron> >&, const edm::Handle< std::vector<pat::Jet> >&, const edm::Handle< std::vector<pat::MET> >&);
 
-    virtual bool JetCut(const edm::Handle< std::vector<pat::Jet> >&);
+    virtual bool JetCut(const edm::Handle< std::vector<pat::Jet> >&, const edm::Handle< std::vector<pat::Electron> >&);
     virtual bool METCut(const edm::Handle< std::vector<pat::MET> >&, const edm::Handle< std::vector<pat::Jet> >&);
     virtual bool LeptonCut(const edm::Handle< std::vector<pat::Muon> >& , const edm::Handle< std::vector<pat::Electron> >&);
 
@@ -351,6 +351,7 @@ class SUSYDiLeptonAnalysis : public edm::EDAnalyzer {
     virtual bool IsCleanMuon(const pat::Muon&);
     virtual bool IsCleanElectron(const pat::Electron&);
     virtual bool IsCleanJet(const pat::Jet& );
+    virtual bool IsIsolatedJet(const pat::Jet&,const edm::Handle< std::vector<pat::Electron> >&);
     virtual bool IsIsolatedMuon(const pat::Muon&);
     virtual bool IsIsolatedElectron(const pat::Electron&);
     virtual void PrintStatistics(void);
