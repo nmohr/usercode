@@ -1,0 +1,8 @@
+<use name=FWCore/Framework>
+<use name=PhysicsTools/UtilAlgos>
+<use name=DataFormats/TrackReco>
+<use name=DataFormats/GsfTrackReco>
+<use name=SUSYBSMAnalysis/SusyCAF>
+<library file="*.cc" name=SUSYBSMAnalysisSusyCAFPlugins>
+    <flags EDM_PLUGIN=1>
+</library>
