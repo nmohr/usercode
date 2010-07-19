@@ -9,6 +9,7 @@
 import FWCore.ParameterSet.Config as cms
 
 def addDefaultSUSYPAT(process, mcInfo=True, HLTMenu='HLT', JetMetCorrections='Spring10', mcVersion='' ,theJetNames = ['IC5Calo','AK5JPT'],doValidation=False):
+    extMatch = True
     loadPF2PAT(process,mcInfo,JetMetCorrections,'PF')
     if not mcInfo:
 	removeMCDependence(process)
@@ -25,12 +26,32 @@ def addDefaultSUSYPAT(process, mcInfo=True, HLTMenu='HLT', JetMetCorrections='Sp
                                                    * process.patDefaultSequence * process.patPF2PATSequencePF
                                                    #* process.patTrigger * process.patTriggerEvent
                                                     )
+    if mcInfo and extMatch:
+        extensiveMatching(process)
+        process.susyPatDefaultSequence.replace(process.patDefaultSequence, process.extensiveMatching+process.patDefaultSequence)
 
     if mcVersion == '35x' and 'JPT' in ''.join(theJetNames): 
     	process.susyPatDefaultSequence.replace(process.eventCountProducer, process.eventCountProducer * process.recoJPTJets)
     if doValidation:
         loadSusyValidation(process)
         process.susyPatDefaultSequence.replace(process.patPF2PATSequencePF, process.patPF2PATSequencePF * process.ak5CaloJetsL2L3 * process.metJESCorAK5CaloJet  * process.RecoSusyValidation * process.PatSusyValidation*process.MEtoEDMConverter)
+
+def extensiveMatching(process):
+    process.load("SimGeneral.TrackingAnalysis.trackingParticlesNoSimHits_cfi")    # On RECO
+    process.load("SimMuon.MCTruth.MuonAssociatorByHits_cfi")  # On RECO
+    process.mergedTruth = cms.EDProducer("GenPlusSimParticleProducer",
+        src           = cms.InputTag("g4SimHits"), # use "famosSimHits" for FAMOS
+        setStatus     = cms.int32(5),             # set status = 8 for GEANT GPs
+        filter        = cms.vstring("pt > 4.0"),  # just for testing (optional)
+        genParticles   = cms.InputTag("genParticles") # original genParticle list
+    )
+    process.load("MuonAnalysis.MuonAssociators.muonClassificationByHits_cfi")
+
+    from MuonAnalysis.MuonAssociators.muonClassificationByHits_cfi import addUserData as addClassByHits
+    addClassByHits(process.patMuons,labels=['classByHitsGlb'],extraInfo=True)
+    addClassByHits(process.patMuonsPF,labels=['classByHitsGlb'],extraInfo=True)
+
+    process.extensiveMatching = cms.Sequence(process.mergedTruth+process.muonClassificationByHits )
 
 
 def loadMCVersion(process, mcVersion, mcInfo):
@@ -87,6 +108,8 @@ def loadPF2PAT(process,mcInfo,JetMetCorrections,postfix):
     #-- Relax isolation -----------------------------------------------------------
     process.pfIsolatedMuonsPF.combinedIsolationCut = 3.
     process.pfIsolatedElectronsPF.combinedIsolationCut = 3.
+    process.electronMatchPF.checkCharge = False
+    process.muonMatchPF.checkCharge = False
 
 def loadPATTriggers(process,HLTMenu):
     #-- Trigger matching ----------------------------------------------------------

@@ -26,12 +26,14 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 #-- Input Source --------------------------------------------------------------
 process.source.fileNames = [
-     '/store/data/Commissioning10/MinimumBias/RECO/SD_Mu-Jun9thSkim_v1/0041/FE82CCF6-197F-DF11-AEA5-001A92971B8A.root'
+     #'/store/data/Commissioning10/MinimumBias/RECO/SD_Mu-Jun9thSkim_v1/0041/FE82CCF6-197F-DF11-AEA5-001A92971B8A.root'
      #'/store/relval/CMSSW_3_7_0_pre5/RelValProdTTbar/GEN-SIM-RECO/MC_37Y_V4-v1/0023/BA92C6D3-8863-DF11-B3AF-002618943939.root'
      #'/store/relval/CMSSW_3_6_0_pre6/RelValProdTTbar/GEN-SIM-RECO/MC_36Y_V4-v1/0011/82DAA1BE-B344-DF11-A116-00304867C0C4.root'
      #'/store/relval/CMSSW_3_7_0_pre5/MinimumBias/RECO/GR_R_37X_V4_RelVal_col_10-v1/0024/CAD8C3ED-8E63-DF11-B60D-00261894393B.root'
      #'/store/mc/Spring10/MinBias/GEN-SIM-RECO/START3X_V25B_356ReReco-v1/0007/FE90A396-233C-DF11-8106-002618943898.root'
      #'/store/data/Commissioning10/MinimumBias/RAW-RECO/Apr1Skim_GOODCOLL-v1/0140/E27B88D1-8040-DF11-B3FC-00261894391B.root'
+     #'file:/user/nmohr/nTupleSPADHI.root'
+    '/store/mc/Summer10/ZJets-madgraph/GEN-SIM-RECO/START37_V5_S09-v1/0035/B28B89D1-0D87-DF11-B3EB-003048F0E82A.root'
     ]
 process.maxEvents.input = 100
 # Due to problem in production of LM samples: same event number appears multiple times
@@ -39,12 +41,13 @@ process.source.duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 
 #-- Calibration tag -----------------------------------------------------------
 # Should match input file's tag
-process.GlobalTag.globaltag = 'GR_R_37X_V4::All'
+process.GlobalTag.globaltag = 'START37_V5::All'
+#process.GlobalTag.globaltag = 'GR_R_37X_V6::All'
 
 ############################# START SUSYPAT specifics ####################################
 from PhysicsTools.Configuration.SUSY_pattuple_cff import addDefaultSUSYPAT, getSUSY_pattuple_outputCommands
 #Apply SUSYPAT, parameters are: mcInfo, HLT menu, Jet energy corrections, mcVersion ('35x' for 35x samples, empty string for 36X samples),JetCollections
-addDefaultSUSYPAT(process,False,'HLT','Spring10','',['IC5Calo','AK5PF']) 
+addDefaultSUSYPAT(process,True,'REDIGI37X','Spring10','',['IC5Calo','AK5PF']) 
 SUSY_pattuple_outputCommands = getSUSY_pattuple_outputCommands( process )
 ############################## END SUSYPAT specifics ####################################
 
