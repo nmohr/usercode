@@ -8,8 +8,7 @@
 
 import FWCore.ParameterSet.Config as cms
 
-def addDefaultSUSYPAT(process, mcInfo=True, HLTMenu='HLT', JetMetCorrections='Spring10', mcVersion='' ,theJetNames = ['IC5Calo','AK5JPT'],doValidation=False):
-    extMatch = True
+def addDefaultSUSYPAT(process, mcInfo=True, HLTMenu='HLT', JetMetCorrections='Spring10', mcVersion='' ,theJetNames = ['IC5Calo','AK5JPT'],doValidation=False, extMatch=True):
     loadPF2PAT(process,mcInfo,JetMetCorrections,'PF')
     if not mcInfo:
 	removeMCDependence(process)
@@ -42,7 +41,7 @@ def extensiveMatching(process):
     process.mergedTruth = cms.EDProducer("GenPlusSimParticleProducer",
         src           = cms.InputTag("g4SimHits"), # use "famosSimHits" for FAMOS
         setStatus     = cms.int32(5),             # set status = 8 for GEANT GPs
-        filter        = cms.vstring("pt > 4.0"),  # just for testing (optional)
+        filter        = cms.vstring("pt > 3.0"),  # just for testing (optional)
         genParticles   = cms.InputTag("genParticles") # original genParticle list
     )
     process.load("MuonAnalysis.MuonAssociators.muonClassificationByHits_cfi")
@@ -50,8 +49,13 @@ def extensiveMatching(process):
     from MuonAnalysis.MuonAssociators.muonClassificationByHits_cfi import addUserData as addClassByHits
     addClassByHits(process.patMuons,labels=['classByHitsGlb'],extraInfo=True)
     addClassByHits(process.patMuonsPF,labels=['classByHitsGlb'],extraInfo=True)
+    
+    #process.load("ElectronAnalysis.ElectronAssociators.electronClassificationByHits_cfi")
+    #from ElectronAnalysis.ElectronAssociators.electronClassificationByHits_cfi import addUserData as addEClassByHits
+    #addEClassByHits(process.patElectrons,labels=['classByHitsGsf'],extraInfo=True)
+    #addEClassByHits(process.patElectronsPF,labels=['classByHitsGsf'],extraInfo=True)
 
-    process.extensiveMatching = cms.Sequence(process.mergedTruth+process.muonClassificationByHits )
+    process.extensiveMatching = cms.Sequence(process.mergedTruth+process.muonClassificationByHits) #+process.electronClassificationByHits)
 
 
 def loadMCVersion(process, mcVersion, mcInfo):
@@ -106,8 +110,14 @@ def loadPF2PAT(process,mcInfo,JetMetCorrections,postfix):
     process.patJetsPF.embedGenJetMatch = False
     process.patJetsPF.embedPFCandidates = False
     #-- Relax isolation -----------------------------------------------------------
-    process.pfIsolatedMuonsPF.combinedIsolationCut = 3.
-    process.pfIsolatedElectronsPF.combinedIsolationCut = 3.
+    process.pfNonIsolatedElectronsPF = process.pfIsolatedElectronsPF.clone(combinedIsolationCut = 3.)
+    process.pfNonIsolatedMuonsPF = process.pfIsolatedMuonsPF.clone(combinedIsolationCut = 3.)
+    process.pfElectronSequencePF.replace(process.pfIsolatedElectronsPF,process.pfNonIsolatedElectronsPF+process.pfIsolatedElectronsPF)
+    process.pfMuonSequencePF.replace(process.pfIsolatedMuonsPF,process.pfNonIsolatedMuonsPF+process.pfIsolatedMuonsPF)
+    process.pfIsolatedMuonsPF.combinedIsolationCut = 0.25
+    process.pfIsolatedElectronsPF.combinedIsolationCut = 0.3
+    process.patElectronsPF.pfElectronSource = "pfNonIsolatedElectronsPF"
+    process.patMuonsPF.pfMuonSource = "pfNonIsolatedMuonsPF"
     process.electronMatchPF.checkCharge = False
     process.muonMatchPF.checkCharge = False
 
