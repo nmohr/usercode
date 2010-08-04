@@ -29,7 +29,7 @@ options.register('JetCorrections', 'Spring10', VarParsing.VarParsing.multiplicit
 options.register('hltName', 'HLT', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string, "HLT menu to use for trigger matching")
 options.register('mcVersion', '', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string, "'35X' for samples from Spring10 production")
 #options.register('jetTypes', ['IC5Calo','AK5PF'], VarParsing.VarParsing.multiplicity.list, VarParsing.VarParsing.varType.string, "Jet types that will be produces")
-options.register('hltSelection', '', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string, "hlTrigger used to filter events")
+options.register('hltSelection', '', VarParsing.VarParsing.multiplicity.list, VarParsing.VarParsing.varType.string, "hlTrigger used to filter events")
 
 
 
@@ -72,7 +72,7 @@ SUSY_pattuple_outputCommands = getSUSY_pattuple_outputCommands( process )
 import HLTrigger.HLTfilters.hltHighLevel_cfi as hlt
 if options.hltSelection:
     process.hltFilter = hlt.hltHighLevel.clone(
-        HLTPaths = [ options.hltSelection ],
+        HLTPaths = cms.vstring(options.hltSelection),
         throw = False
     )
     process.susyPatDefaultSequence.replace(process.eventCountProducer, process.eventCountProducer * process.hltFilter)
