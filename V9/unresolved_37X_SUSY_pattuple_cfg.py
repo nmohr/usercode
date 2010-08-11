@@ -11,7 +11,7 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 #-- Meta data to be logged in DBS ---------------------------------------------
 process.configurationMetadata = cms.untracked.PSet(
-    version = cms.untracked.string('$Revision: 1.2 $'),
+    version = cms.untracked.string('$Revision: 1.4 $'),
     name = cms.untracked.string('$Source: /cvs_server/repositories/CMSSW/UserCode/NiklasMohr/V9/unresolved_37X_SUSY_pattuple_cfg.py,v $'),
     annotation = cms.untracked.string('SUSY pattuple definition')
 )
@@ -28,14 +28,18 @@ options.register('mcInfo', False, VarParsing.VarParsing.multiplicity.singleton, 
 options.register('JetCorrections', 'Spring10', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string, "Jet corrections to use")
 options.register('hltName', 'HLT', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string, "HLT menu to use for trigger matching")
 options.register('mcVersion', '', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string, "'35X' for samples from Spring10 production")
-#options.register('jetTypes', ['IC5Calo','AK5PF'], VarParsing.VarParsing.multiplicity.list, VarParsing.VarParsing.varType.string, "Jet types that will be produces")
+options.register('jetTypes', '', VarParsing.VarParsing.multiplicity.list, VarParsing.VarParsing.varType.string, "Jet types that will be produces")
 options.register('hltSelection', '', VarParsing.VarParsing.multiplicity.list, VarParsing.VarParsing.varType.string, "hlTrigger used to filter events")
-
-
 
 #---parse user input
 options.parseArguments()
 options._tagOrder =[]
+
+jetList = []
+if options.jetTypes:
+    for jet in options.jetTypes: jetList.append(jet)
+else:
+    jetList = ['IC5Calo','AK5PF']
 
 #-- Message Logger ------------------------------------------------------------
 process.MessageLogger.categories.append('PATSummaryTables')
@@ -58,14 +62,13 @@ process.maxEvents.input = options.maxEvents
 process.source.duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 
 #-- Calibration tag -----------------------------------------------------------
-# Should match input file's tag
 if options.GlobalTag:
     process.GlobalTag.globaltag = options.GlobalTag
 
 ############################# START SUSYPAT specifics ####################################
 from PhysicsTools.Configuration.SUSY_pattuple_cff import addDefaultSUSYPAT, getSUSY_pattuple_outputCommands
 #Apply SUSYPAT, parameters are: mcInfo, HLT menu, Jet energy corrections, mcVersion ('35x' for 35x samples, empty string for 36X samples),JetCollections
-addDefaultSUSYPAT(process,options.mcInfo,options.hltName,options.JetCorrections,options.mcVersion,['IC5Calo','AK5PF']) 
+addDefaultSUSYPAT(process,options.mcInfo,options.hltName,options.JetCorrections,options.mcVersion,jetList) 
 SUSY_pattuple_outputCommands = getSUSY_pattuple_outputCommands( process )
 ############################## END SUSYPAT specifics ####################################
 
