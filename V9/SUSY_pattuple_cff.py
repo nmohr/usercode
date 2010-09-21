@@ -13,7 +13,7 @@ def addDefaultSUSYPAT(process,mcInfo=True,HLTMenu='HLT',JetMetCorrections='Sprin
     if not mcInfo:
 	removeMCDependence(process)
     loadMCVersion(process,mcVersion,mcInfo)
-    loadPAT(process,JetMetCorrections)
+    loadPAT(process,JetMetCorrections,extMatch)
     addJetMET(process,theJetNames,mcVersion)
     loadPATTriggers(process,HLTMenu,theJetNames,electronMatches,muonMatches,tauMatches,jetMatches,photonMatches)
 
@@ -67,7 +67,7 @@ def loadMCVersion(process, mcVersion, mcInfo):
     else: raise ValueError, "Unknown MC version: %s" % (mcVersion)
 
 
-def loadPAT(process,JetMetCorrections):
+def loadPAT(process,JetMetCorrections,extMatch):
     #-- Changes for electron and photon ID ----------------------------------------
     # Turn off photon-electron cleaning (i.e., flag only)
     process.cleanPatPhotons.checkOverlaps.electrons.requireNoOverlaps = False
@@ -90,6 +90,11 @@ def loadPAT(process,JetMetCorrections):
     process.patJetPartonMatch.maxDPtRel  = cms.double(999999.)
     process.patJetGenJetMatch.maxDeltaR  = cms.double(0.25)
     process.patJetGenJetMatch.maxDPtRel  = cms.double(999999.)
+    if extMatch:
+        process.electronMatch.mcStatus = cms.vint32(1,5)
+        process.electronMatch.matched = "mergedTruth"
+        process.muonMatchPF.mcStatus = cms.vint32(1,5)
+        process.muonMatchPF.matched = "mergedTruth"
 
     #-- Jet corrections -----------------------------------------------------------
     process.patJetCorrFactors.corrSample = JetMetCorrections 
@@ -104,29 +109,64 @@ def loadPF2PAT(process,mcInfo,JetMetCorrections,extMatch,doSusyTopProjection,pos
     usePF2PAT(process,runPF2PAT=True, jetAlgo='AK5',runOnMC=mcInfo,postfix=postfix)
     process.patJetsPF.embedGenJetMatch = False
     process.patJetsPF.embedPFCandidates = False
+    process.electronMatchPF.checkCharge = False
+    process.muonMatchPF.checkCharge = False
+    if extMatch:
+        process.electronMatchPF.maxDeltaR   = cms.double(0.2)
+        process.electronMatchPF.maxDPtRel   = cms.double(999999.)
+        process.electronMatchPF.mcStatus = cms.vint32(1,5)
+        process.electronMatchPF.matched = "mergedTruth"
+        process.muonMatchPF.maxDeltaR   = cms.double(0.2)
+        process.muonMatchPF.maxDPtRel   = cms.double(999999.)
+        process.muonMatchPF.mcStatus = cms.vint32(1,5)
+        process.muonMatchPF.matched = "mergedTruth"
+
+    if not doSusyTopProjection:
+        return
     #-- Top projection selection -----------------------------------------------------------
+    #Vertices
+    process.goodVertices = cms.EDFilter("VertexSelector",
+        src = cms.InputTag("offlinePrimaryVertices"),
+        cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.Rho <= 2"),
+        filter = cms.bool(False),
+    )
     #Electrons
     process.pfRelaxedElectronsPF = process.pfIsolatedElectronsPF.clone(combinedIsolationCut = 3.)
-    if doSusyTopProjection:
-        process.pfIsolatedElectronsPF.combinedIsolationCut = 0.3
+    process.pfIsolatedElectronsPF.combinedIsolationCut = 0.3
+    process.pfElectronsFromVertex = cms.EDFilter(
+        "IPCutPFCandidateSelector",
+        src = cms.InputTag("pfIsolatedElectronsPF"),  # PFCandidate source
+        vertices = cms.InputTag("goodVertices"),  # vertices source
+        d0Cut = cms.double(0.04),  # transverse IP
+        dzCut = cms.double(1.),  # longitudinal IP
+        d0SigCut = cms.double(99.),  # transverse IP significance
+        dzSigCut = cms.double(99.),  # longitudinal IP significance
+    )
     electronSelection =  "abs( eta ) < 2.5 & pt > 5"
     electronSelection += " & mva_e_pi > 0.6" # same as patElectron::mva()
     electronSelection += " & gsfTrackRef().isNonnull() & gsfTrackRef().trackerExpectedHitsInner().numberOfHits() > 1"
-    #FIXME: d0 to PV
     process.pfUnclusteredElectronsPF = cms.EDFilter( "GenericPFCandidateSelector",
         src = cms.InputTag("pfIsolatedElectronsPF"), #pfSelectedElectronsPF
         cut = cms.string(electronSelection)
     )    
     process.pfElectronSequencePF.replace(process.pfIsolatedElectronsPF,
-                                         process.pfIsolatedElectronsPF + process.pfUnclusteredElectronsPF + process.pfRelaxedElectronsPF)
-    if doSusyTopProjection:
-        process.patElectronsPF.pfElectronSource = "pfRelaxedElectronsPF"
-        process.pfNoElectronPF.topCollection  = "pfUnclusteredElectronsPF"
-    
+                                         process.pfIsolatedElectronsPF + 
+                                         process.goodVertices * process.pfElectronsFromVertex + 
+                                         process.pfUnclusteredElectronsPF + process.pfRelaxedElectronsPF)
+    process.patElectronsPF.pfElectronSource = "pfRelaxedElectronsPF"
+    process.pfNoElectronPF.topCollection  = "pfUnclusteredElectronsPF"
     #Muons
     process.pfRelaxedMuonsPF = process.pfIsolatedMuonsPF.clone(combinedIsolationCut = 3)
-    if doSusyTopProjection:
-        process.pfIsolatedMuonsPF.combinedIsolationCut = 0.25
+    process.pfIsolatedMuonsPF.combinedIsolationCut = 0.25
+    process.pfMuonsFromVertex = cms.EDFilter(
+        "IPCutPFCandidateSelector",
+        src = cms.InputTag("pfIsolatedMuonsPF"),  # PFCandidate source
+        vertices = cms.InputTag("goodVertices"),  # vertices source
+        d0Cut = cms.double(0.02),  # transverse IP
+        dzCut = cms.double(1.),  # longitudinal IP
+        d0SigCut = cms.double(99.),  # transverse IP significance
+        dzSigCut = cms.double(99.),  # longitudinal IP significance
+    )
     muonSelection =  "abs( eta ) < 2.5 & pt > 5"
     #GlobalMuonPromptTight
     muonSelection += " & muonRef().isNonnull & muonRef().isGlobalMuon()"
@@ -134,27 +174,16 @@ def loadPF2PAT(process,mcInfo,JetMetCorrections,extMatch,doSusyTopProjection,pos
     muonSelection += " & muonRef().globalTrack().normalizedChi2() < 10"
     muonSelection += " & muonRef().globalTrack().hitPattern().numberOfValidMuonHits() > 0"
     muonSelection += " & muonRef().innerTrack().hitPattern().numberOfValidPixelHits() > 0"
-    #FIXME: d0 to PV
     process.pfUnclusteredMuonsPF = cms.EDFilter( "GenericPFCandidateSelector",
         src = cms.InputTag("pfIsolatedMuonsPF"), #pfSelectedMuonsPF
         cut = cms.string(muonSelection)
     )    
     process.pfMuonSequencePF.replace(process.pfIsolatedMuonsPF,
-                                     process.pfIsolatedMuonsPF + process.pfUnclusteredMuonsPF + process.pfRelaxedMuonsPF)
-    if doSusyTopProjection:
-        process.patMuonsPF.pfMuonSource  = "pfRelaxedMuonsPF"
-        process.pfNoMuonPF.topCollection = "pfUnclusteredMuonsPF"
-    process.electronMatchPF.checkCharge = False
-    process.muonMatchPF.checkCharge = False
-    if extMatch:
-        process.electronMatchPF.maxDeltaR   = cms.double(0.1)
-        process.electronMatchPF.maxDPtRel   = cms.double(999999.)
-        process.electronMatchPF.mcStatus = cms.vint32(1,5)
-        process.electronMatchPF.matched = "mergedTruth"
-        process.muonMatchPF.maxDeltaR   = cms.double(0.1)
-        process.muonMatchPF.maxDPtRel   = cms.double(999999.)
-        process.muonMatchPF.mcStatus = cms.vint32(1,5)
-        process.muonMatchPF.matched = "mergedTruth"
+                                     process.pfIsolatedMuonsPF + 
+                                     process.goodVertices * process.pfMuonsFromVertex +
+                                     process.pfUnclusteredMuonsPF + process.pfRelaxedMuonsPF)
+    process.patMuonsPF.pfMuonSource  = "pfRelaxedMuonsPF"
+    process.pfNoMuonPF.topCollection = "pfUnclusteredMuonsPF"
     
 
 def loadPATTriggers(process,HLTMenu,theJetNames,electronMatches,muonMatches,tauMatches,jetMatches,photonMatches):
@@ -164,6 +193,7 @@ def loadPATTriggers(process,HLTMenu,theJetNames,electronMatches,muonMatches,tauM
     # If we have to rename the default trigger menu
     process.patTrigger.processName = HLTMenu
     process.patTriggerEvent.processName = HLTMenu
+    #Add dummy sequence
     process.patTriggerMatcher = cms.Sequence(process.patJets)
     process.patTriggerMatcherPF = cms.Sequence(process.patJetsPF)
     process.patTriggerSequencePF = cms.Sequence(process.patTrigger*process.patTriggerMatcherPF*process.patTriggerEvent)
@@ -178,7 +208,7 @@ def loadPATTriggers(process,HLTMenu,theJetNames,electronMatches,muonMatches,tauM
     process.triggerMatchedPatElectronsPF = process.triggerMatchedPatElectrons.clone(src='selectedPatElectronsPF',matches=[i+'PF' for i in electronMatches])
     process.patTriggerSequence += process.triggerMatchedPatElectrons
     process.patTriggerSequencePF += process.triggerMatchedPatElectronsPF
-    #Muon
+    #Muons
     for i in range(len(muonMatches)):
         setattr(process,'muonTriggerMatch'+muonMatches[i].replace('_',''),process.muonTriggerMatchHLTMu3.clone(pathNames=[muonMatches[i]]))
         process.patTriggerMatcher += getattr(process,'muonTriggerMatch'+muonMatches[i].replace('_',''))
@@ -225,8 +255,10 @@ def loadPATTriggers(process,HLTMenu,theJetNames,electronMatches,muonMatches,tauM
     process.patTriggerSequence += process.triggerMatchedPatTaus
     process.patTriggerSequencePF += process.triggerMatchedPatTausPF
     process.patTriggerEvent.patTriggerMatches = electronMatches+muonMatches+tauMatches+jetMatches
+    #Remove dummy from sequence
     process.patTriggerMatcher.remove(process.patJets)
     process.patTriggerMatcherPF.remove(process.patJetsPF)
+    #Add PF trigger matching
     process.patDefaultSequencePF += process.patTriggerSequencePF
 
 def addSUSYJetCollection(process,jets = 'IC5Calo',mcVersion='',doJTA=False,doType1MET=False,doJetID=True,jetIdLabel=None):
@@ -300,20 +332,20 @@ def addJetMET(process,theJetNames,mcVersion):
     # Rename default jet collection for uniformity
     process.cleanPatJetsAK5Calo = process.cleanPatJets
     process.patMETsAK5Calo      = process.patMETs
-    process.patMHTsAK5Calo      = process.patMHTs
+    #process.patMHTsAK5Calo      = process.patMHTs
 
     # Modify subsequent modules
     process.patHemispheres.patJets = process.cleanPatJetsAK5Calo.label()
     process.countPatJets.src       = process.cleanPatJetsAK5Calo.label()
     
     # Add MHT (inserted until officially suported)
-    from PhysicsTools.PatAlgos.producersLayer1.mhtProducer_cff import makePatMHTs, patMHTs
-    process.countPatCandidates.replace(process.countPatJets, process.countPatJets + process.makePatMHTs)
-    process.patMHTs.jetTag      = 'patJets'
-    process.patMHTs.electronTag = 'patElectrons'
-    process.patMHTs.muonTag     = 'patMuons'
-    process.patMHTs.tauTag      = 'patTaus'
-    process.patMHTs.photonTag   = 'patPhotons'
+    #from PhysicsTools.PatAlgos.producersLayer1.mhtProducer_cff import makePatMHTs, patMHTs
+    #process.countPatCandidates.replace(process.countPatJets, process.countPatJets + process.makePatMHTs)
+    #process.patMHTs.jetTag      = 'patJets'
+    #process.patMHTs.electronTag = 'patElectrons'
+    #process.patMHTs.muonTag     = 'patMuons'
+    #process.patMHTs.tauTag      = 'patTaus'
+    #process.patMHTs.photonTag   = 'patPhotons'
 
     # Modify counters' input
     process.patCandidateSummary.candidates.remove(cms.InputTag('patMETs'))
@@ -349,7 +381,7 @@ def getSUSY_pattuple_outputCommands( process ):
 	from PhysicsTools.PatAlgos.patEventContent_cff import patEventContent, patExtraAodEventContent, patTriggerEventContent, patTriggerStandAloneEventContent, patEventContentTriggerMatch
 	keepList = []
     	susyAddEventContent = [ # PAT Objects
-        'keep *_triggerMatched*_*_*',         
+        #'keep *_triggerMatched*_*_*',         
 	# Keep PF2PAT output
         'keep *_selectedPatMuonsPF_*_*',         
         'keep *_selectedPatElectronsPF_*_*',         

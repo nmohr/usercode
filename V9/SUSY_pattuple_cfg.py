@@ -1,7 +1,7 @@
 #
 #  SUSY-PAT configuration file
 #
-#  PAT configuration for the SUSY group - 37X series
+#  PAT configuration for the SUSY group - 38X series
 #  More information here:
 #  https://twiki.cern.ch/twiki/bin/view/CMS/SusyPatLayer1DefV9
 #
@@ -30,7 +30,7 @@ options = VarParsing.VarParsing ('standard')
 
 options.output = "SUSYPAT.root"
 options.maxEvents = 100
-#  for SusyCaf specifics
+#  for SusyPAT configuration
 options.register('GlobalTag', "", VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string, "GlobalTag to use (otherwise default Pat GT is used)")
 options.register('mcInfo', True, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "process MonteCarlo data")
 options.register('JetCorrections', 'Spring10', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string, "Jet corrections to use, default 'Spring10'")
@@ -41,7 +41,7 @@ options.jetTypes.append('AK5JPT')
 options.register('hltSelection', '', VarParsing.VarParsing.multiplicity.list, VarParsing.VarParsing.varType.string, "hlTriggers (OR) used to filter events")
 options.register('doValidation', False, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "Include the validation histograms from SusyDQM (needs extra tags)")
 options.register('doExtensiveMatching', False, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "Matching to simtracks (needs extra tags)")
-options.register('doSusyTopProjection', False, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "Apply Susy selection to PF2PAT with relaxed lepton iso (needs validation)")
+options.register('doSusyTopProjection', False, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "Apply Susy selection in PF2PAT to obtain lepton cleaned jets (needs validation)")
 options.register('electronHLTMatches', 'HLT_Ele15_LW_L1R', VarParsing.VarParsing.multiplicity.list, VarParsing.VarParsing.varType.string, "HLT paths matched to electrons")
 options.register('muonHLTMatches', 'HLT_Mu9', VarParsing.VarParsing.multiplicity.list, VarParsing.VarParsing.varType.string, "HLT paths matched to muons")
 options.register('tauHLTMatches', 'HLT_Jet15U', VarParsing.VarParsing.multiplicity.list, VarParsing.VarParsing.varType.string, "HLT paths matched to taus")
@@ -51,6 +51,7 @@ options.register('photonHLTMatches', 'HLT_Photon30', VarParsing.VarParsing.multi
 options.register('jetHLTMatches', 'HLT_Jet15U', VarParsing.VarParsing.multiplicity.list, VarParsing.VarParsing.varType.string, "HLT paths matched to jets")
 options.jetHLTMatches.append('HLT_Jet30U')
 options.jetHLTMatches.append('HLT_Jet50U')
+options.register('addKeep', '', VarParsing.VarParsing.multiplicity.list, VarParsing.VarParsing.varType.string, "Additional keep and drop statements to trim the event content")
 
 #---parse user input
 options.parseArguments()
@@ -73,7 +74,7 @@ if options.GlobalTag:
 
 ############################# START SUSYPAT specifics ####################################
 from PhysicsTools.Configuration.SUSY_pattuple_cff import addDefaultSUSYPAT, getSUSY_pattuple_outputCommands
-#Apply SUSYPAT, parameters are: mcInfo, HLT menu, Jet energy corrections, mcVersion ('35x' for 35x samples, empty string for later samples),JetCollections
+#Apply SUSYPAT
 addDefaultSUSYPAT(process,options.mcInfo,options.hltName,options.JetCorrections,options.mcVersion,options.jetTypes,options.doValidation,options.doExtensiveMatching,options.doSusyTopProjection,options.electronHLTMatches,options.muonHLTMatches,options.tauHLTMatches,options.jetHLTMatches,options.photonHLTMatches)
 SUSY_pattuple_outputCommands = getSUSY_pattuple_outputCommands( process )
 ############################## END SUSYPAT specifics ####################################
@@ -83,6 +84,7 @@ import HLTrigger.HLTfilters.hltHighLevel_cfi as hlt
 if options.hltSelection:
     process.hltFilter = hlt.hltHighLevel.clone(
         HLTPaths = cms.vstring(options.hltSelection),
+        TriggerResultsTag = cms.InputTag("TriggerResults","",options.hltName),
         throw = False
     )
     process.susyPatDefaultSequence.replace(process.eventCountProducer, process.eventCountProducer * process.hltFilter)
@@ -97,6 +99,8 @@ process.out.dropMetaData = cms.untracked.string('DROPPED')   # Get rid of metada
 process.out.outputCommands = cms.untracked.vstring('drop *', *SUSY_pattuple_outputCommands )
 if options.hltSelection:
     process.out.SelectEvents = cms.untracked.PSet(SelectEvents = cms.vstring("p"))
+if options.addKeep:
+    process.out.outputCommands.extend(options.addKeep)
 
 #-- Execution path ------------------------------------------------------------
 # Full path
