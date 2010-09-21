@@ -170,8 +170,9 @@ def loadPF2PAT(process,mcInfo,JetMetCorrections,extMatch,doSusyTopProjection,pos
     muonSelection =  "abs( eta ) < 2.5 & pt > 5"
     #GlobalMuonPromptTight
     muonSelection += " & muonRef().isNonnull & muonRef().isGlobalMuon()"
-    muonSelection += " & muonRef().isTrackerMuon() & muonRef().numberOfMatches >= 2"
+    muonSelection += " & muonRef().isTrackerMuon() & muonRef().numberOfMatches > 1"
     muonSelection += " & muonRef().globalTrack().normalizedChi2() < 10"
+    muonSelection += " & muonRef().track().numberOfValidHits() > 10"
     muonSelection += " & muonRef().globalTrack().hitPattern().numberOfValidMuonHits() > 0"
     muonSelection += " & muonRef().innerTrack().hitPattern().numberOfValidPixelHits() > 0"
     process.pfUnclusteredMuonsPF = cms.EDFilter( "GenericPFCandidateSelector",
@@ -184,6 +185,8 @@ def loadPF2PAT(process,mcInfo,JetMetCorrections,extMatch,doSusyTopProjection,pos
                                      process.pfUnclusteredMuonsPF + process.pfRelaxedMuonsPF)
     process.patMuonsPF.pfMuonSource  = "pfRelaxedMuonsPF"
     process.pfNoMuonPF.topCollection = "pfUnclusteredMuonsPF"
+    #Remove jet pt cut
+    process.pfJetsPF.ptMin = 0.
     
 
 def loadPATTriggers(process,HLTMenu,theJetNames,electronMatches,muonMatches,tauMatches,jetMatches,photonMatches):
