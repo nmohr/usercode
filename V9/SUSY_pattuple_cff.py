@@ -75,6 +75,11 @@ def loadPAT(process,JetMetCorrections,extMatch):
     # Remove embedding of superClusters, will keep entire superCluster collection
     process.patElectrons.embedSuperCluster = False
     process.patPhotons.embedSuperCluster   = False
+
+    #include tau decay mode in pat::Taus (elese it will just be uninitialized)
+    #decay modes are dropped and have to be redone, this is a bit dangorous since the decay modes insered are *not* the ones used in RECO
+    process.patTaus.addDecayMode = True
+    process.makePatTaus.replace( process.patTaus, process.shrinkingConePFTauDecayModeProducer + process.patTaus )
     
     #-- Tuning of Monte Carlo matching --------------------------------------------
     # Also match with leptons of opposite charge
@@ -93,8 +98,8 @@ def loadPAT(process,JetMetCorrections,extMatch):
     if extMatch:
         process.electronMatch.mcStatus = cms.vint32(1,5)
         process.electronMatch.matched = "mergedTruth"
-        process.muonMatchPF.mcStatus = cms.vint32(1,5)
-        process.muonMatchPF.matched = "mergedTruth"
+        process.muonMatch.mcStatus = cms.vint32(1,5)
+        process.muonMatch.matched = "mergedTruth"
 
     #-- Jet corrections -----------------------------------------------------------
     process.patJetCorrFactors.corrSample = JetMetCorrections 
@@ -120,6 +125,11 @@ def loadPF2PAT(process,mcInfo,JetMetCorrections,extMatch,doSusyTopProjection,pos
         process.muonMatchPF.maxDPtRel   = cms.double(999999.)
         process.muonMatchPF.mcStatus = cms.vint32(1,5)
         process.muonMatchPF.matched = "mergedTruth"
+    #Remove jet pt cut
+    process.pfJetsPF.ptMin = 0.
+    #include tau decay mode in pat::Taus (elese it will just be uninitialized)
+    process.patTausPF.addDecayMode = True
+    process.patTausPF.decayModeSrc = "shrinkingConePFTauDecayModeProducerPF"    
 
     if not doSusyTopProjection:
         return
@@ -185,8 +195,6 @@ def loadPF2PAT(process,mcInfo,JetMetCorrections,extMatch,doSusyTopProjection,pos
                                      process.pfUnclusteredMuonsPF + process.pfRelaxedMuonsPF)
     process.patMuonsPF.pfMuonSource  = "pfRelaxedMuonsPF"
     process.pfNoMuonPF.topCollection = "pfUnclusteredMuonsPF"
-    #Remove jet pt cut
-    process.pfJetsPF.ptMin = 0.
     
 
 def loadPATTriggers(process,HLTMenu,theJetNames,electronMatches,muonMatches,tauMatches,jetMatches,photonMatches):
