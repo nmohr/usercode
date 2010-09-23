@@ -20,9 +20,9 @@ f = ROOT.TFile("susy_plot.root", "RECREATE")
 f.cd()
 
 #book histogram for all MET types
-metPF  = ROOT.TH1F("metPF", "pfMET",    35,  0.,350.)
-metTC  = ROOT.TH1F("metTC", "tcMET",    35,  0.,350.)
-metCalo  = ROOT.TH1F("metCalo", "caloMET",    35,  0.,350.)
+metPF  = ROOT.TH1F("metPF", "pfMET",    35,  0.,700.)
+metTC  = ROOT.TH1F("metTC", "tcMET",    35,  0.,700.)
+metCalo  = ROOT.TH1F("metCalo", "caloMET",    35,  0.,700.)
 
 # loop over events
 i = 0
@@ -55,8 +55,11 @@ ROOT.gStyle.SetOptStat(0)
 canvas = ROOT.TCanvas( 'canvas', 'Canvas with met collections', 600, 600 )
 canvas.SetLogy()
 metPF.SetLineColor(ROOT.kRed)
+metPF.SetLineWidth(2)
 metTC.SetLineColor(ROOT.kGreen)
+metTC.SetLineWidth(2)
 metCalo.SetLineColor(ROOT.kBlue)
+metCalo.SetLineWidth(2)
 metPF.GetYaxis().SetTitle("Entries")
 metPF.GetXaxis().SetTitle("MET [GeV]")
 metPF.Draw("HIST")
