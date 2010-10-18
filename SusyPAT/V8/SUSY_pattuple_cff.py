@@ -51,6 +51,28 @@ def loadPAT(process,JetMetCorrections):
     # Remove embedding of superClusters, will keep entire superCluster collection
     process.patElectrons.embedSuperCluster = False
     process.patPhotons.embedSuperCluster   = False
+
+    #Additional electron ids as defined for VBTF
+    process.load("ElectroWeakAnalysis.WENu.simpleEleIdSequence_cff")
+    process.patElectrons.electronIDSources = cms.PSet(
+    eidTight = cms.InputTag("eidTight"),
+    eidLoose = cms.InputTag("eidLoose"),
+    eidRobustTight = cms.InputTag("eidRobustTight"),
+    eidRobustHighEnergy = cms.InputTag("eidRobustHighEnergy"),
+    eidRobustLoose = cms.InputTag("eidRobustLoose"),
+    simpleEleId95relIso= cms.InputTag("simpleEleId95relIso"),
+    simpleEleId90relIso= cms.InputTag("simpleEleId90relIso"),
+    simpleEleId85relIso= cms.InputTag("simpleEleId85relIso"),
+    simpleEleId80relIso= cms.InputTag("simpleEleId80relIso"),
+    simpleEleId70relIso= cms.InputTag("simpleEleId70relIso"),
+    simpleEleId60relIso= cms.InputTag("simpleEleId60relIso"),
+    simpleEleId95cIso= cms.InputTag("simpleEleId95cIso"),
+    simpleEleId90cIso= cms.InputTag("simpleEleId90cIso"),
+    simpleEleId85cIso= cms.InputTag("simpleEleId85cIso"),
+    simpleEleId80cIso= cms.InputTag("simpleEleId80cIso"),
+    simpleEleId70cIso= cms.InputTag("simpleEleId70cIso"),
+    simpleEleId60cIso= cms.InputTag("simpleEleId60cIso"))
+    process.makePatElectrons.replace(process.patElectrons,process.simpleEleIdSequence+process.patElectrons)
     
     #-- Tuning of Monte Carlo matching --------------------------------------------
     # Also match with leptons of opposite charge
@@ -81,8 +103,8 @@ def loadPF2PAT(process,mcInfo,JetMetCorrections,postfix):
     process.patJetsPF.embedGenJetMatch = False
     process.patJetsPF.embedPFCandidates = False
     #-- Relax isolation -----------------------------------------------------------
-    process.pfIsolatedMuonsPF.combinedIsolationCut = 3.
-    process.pfIsolatedElectronsPF.combinedIsolationCut = 3.
+    #process.pfIsolatedMuonsPF.combinedIsolationCut = 3.
+    #process.pfIsolatedElectronsPF.combinedIsolationCut = 3.
 
 def loadPATTriggers(process,HLTMenu):
     #-- Trigger matching ----------------------------------------------------------
