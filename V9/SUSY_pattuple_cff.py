@@ -165,11 +165,11 @@ def loadPF2PAT(process,mcInfo,JetMetCorrections,extMatch,doSusyTopProjection,pos
     process.pfJetsPF.ptMin = 0.
     #include tau decay mode in pat::Taus (elese it will just be uninitialized)
     process.patTausPF.addDecayMode = True
-    process.patTausPF.decayModeSrc = "shrinkingConePFTauDecayModeProducerPF"    
-    
+    process.patTausPF.decayModeSrc = "shrinkingConePFTauDecayModeProducerPF" 
+
     #-- Enable pileup sequence -------------------------------------------------------------
-    process.pfPileUpPF.Vertices = "offlinePrimaryVertices"
-    process.pfPileUpPF.Enable = True
+    #process.pfPileUpPF.Vertices = "offlinePrimaryVertices"
+    #process.pfPileUpPF.Enable = True    
 
     if not doSusyTopProjection:
         return
@@ -246,77 +246,47 @@ def loadPF2PAT(process,mcInfo,JetMetCorrections,extMatch,doSusyTopProjection,pos
 
 def loadPATTriggers(process,HLTMenu,theJetNames,electronMatches,muonMatches,tauMatches,jetMatches,photonMatches):
     #-- Trigger matching ----------------------------------------------------------
-    from PhysicsTools.PatAlgos.tools.trigTools import switchOnTrigger
-    switchOnTrigger( process )
-    # If we have to rename the default trigger menu
-    process.patTrigger.processName = HLTMenu
-    process.patTriggerEvent.processName = HLTMenu
-    #Add dummy sequence
-    process.patTriggerMatcher = cms.Sequence(process.patJets)
-    process.patTriggerMatcherPF = cms.Sequence(process.patJetsPF)
-    process.patTriggerSequencePF = cms.Sequence(process.patTrigger*process.patTriggerMatcherPF*process.patTriggerEvent)
+    from PhysicsTools.PatAlgos.tools.trigTools import switchOnTrigger, switchOnTriggerMatchEmbedding
+    switchOnTrigger(process, triggerProducer='patTrigger', triggerEventProducer='patTriggerEvent', sequence='patDefaultSequence', hltProcess=HLTMenu)
+    process.patTriggerPF = process.patTrigger.clone()
+    process.patTriggerEventPF = process.patTriggerEvent.clone()
+    process.patTriggerSequencePF = cms.Sequence(process.patTriggerPF+process.patTriggerEventPF)
     #Electrons
-    for i in range(len(electronMatches)):
-        setattr(process,'electronTriggerMatch'+electronMatches[i].replace('_',''),process.electronTriggerMatchHLTEle15LWL1R.clone(pathNames=[electronMatches[i]]))
-        process.patTriggerMatcher += getattr(process,'electronTriggerMatch'+electronMatches[i].replace('_',''))
-        setattr(process,'electronTriggerMatch'+electronMatches[i].replace('_','')+'PF',process.electronTriggerMatchHLTEle15LWL1R.clone(pathNames=[electronMatches[i]],src = 'selectedPatElectronsPF'))
-        process.patTriggerMatcherPF += getattr(process,'electronTriggerMatch'+electronMatches[i].replace('_','')+'PF')
-        electronMatches[i] = 'electronTriggerMatch'+electronMatches[i].replace('_','')
-    process.triggerMatchedPatElectrons = process.cleanPatElectronsTriggerMatch.clone(matches=electronMatches)
-    process.triggerMatchedPatElectronsPF = process.triggerMatchedPatElectrons.clone(src='selectedPatElectronsPF',matches=[i+'PF' for i in electronMatches])
-    process.patTriggerSequence += process.triggerMatchedPatElectrons
-    process.patTriggerSequencePF += process.triggerMatchedPatElectronsPF
+    from PhysicsTools.PatAlgos.triggerLayer1.triggerMatcher_cfi import cleanElectronTriggerMatchHLTEle20SWL1R
+    process.patElectronMatch = cleanElectronTriggerMatchHLTEle20SWL1R.clone(pathNames=electronMatches)
+    process.patElectronMatchPF = cleanElectronTriggerMatchHLTEle20SWL1R.clone(pathNames=electronMatches, src='selectedPatElectronsPF')
+    process.patTriggerSequencePF += process.patElectronMatchPF
+    switchOnTriggerMatchEmbedding( process, ['patElectronMatch'], hltProcess=HLTMenu)
+    switchOnTriggerMatchEmbedding( process, ['patElectronMatchPF'], triggerProducer='patTriggerPF', sequence='patTriggerSequencePF', hltProcess=HLTMenu)
     #Muons
-    for i in range(len(muonMatches)):
-        setattr(process,'muonTriggerMatch'+muonMatches[i].replace('_',''),process.muonTriggerMatchHLTMu3.clone(pathNames=[muonMatches[i]]))
-        process.patTriggerMatcher += getattr(process,'muonTriggerMatch'+muonMatches[i].replace('_',''))
-        setattr(process,'muonTriggerMatch'+muonMatches[i].replace('_','')+'PF',process.muonTriggerMatchHLTMu3.clone(pathNames=[muonMatches[i]],src = 'selectedPatMuonsPF'))
-        process.patTriggerMatcherPF += getattr(process,'muonTriggerMatch'+muonMatches[i].replace('_','')+'PF')
-        muonMatches[i] = 'muonTriggerMatch'+muonMatches[i].replace('_','')
-    process.triggerMatchedPatMuons = process.cleanPatMuonsTriggerMatch.clone(matches = muonMatches)
-    process.triggerMatchedPatMuonsPF = process.triggerMatchedPatMuons.clone(src='selectedPatMuonsPF',matches=[i+'PF' for i in muonMatches])
-    process.patTriggerSequence += process.triggerMatchedPatMuons
-    process.patTriggerSequencePF += process.triggerMatchedPatMuonsPF
+    from PhysicsTools.PatAlgos.triggerLayer1.triggerMatcher_cfi import cleanMuonTriggerMatchHLTMu9
+    process.patMuonMatch = cleanMuonTriggerMatchHLTMu9.clone(pathNames=muonMatches)
+    process.patMuonMatchPF = cleanMuonTriggerMatchHLTMu9.clone(pathNames=muonMatches,src = 'selectedPatMuonsPF',matched='patTriggerPF')
+    process.patTriggerSequencePF += process.patMuonMatchPF
+    switchOnTriggerMatchEmbedding( process, ['patMuonMatch'], hltProcess=HLTMenu)
+    switchOnTriggerMatchEmbedding( process, ['patMuonMatchPF'], triggerProducer='patTriggerPF', sequence='patTriggerSequencePF', hltProcess=HLTMenu)
     #Photons
-    for i in range(len(photonMatches)):
-        setattr(process,'photonTriggerMatch'+photonMatches[i].replace('_',''),process.electronTriggerMatchHLTEle15LWL1R.clone(pathNames=[photonMatches[i]],src = 'cleanPatPhotons',filterIdsEnum = cms.vstring('TriggerPhoton')))
-        process.patTriggerMatcher += getattr(process,'photonTriggerMatch'+photonMatches[i].replace('_',''))
-        photonMatches[i] = 'photonTriggerMatch'+photonMatches[i].replace('_','')
-    process.triggerMatchedPatPhotons = process.cleanPatPhotonsTriggerMatch.clone(matches = photonMatches)
-    process.patTriggerSequence += process.triggerMatchedPatPhotons
+    from PhysicsTools.PatAlgos.triggerLayer1.triggerMatcher_cfi import cleanPhotonTriggerMatchHLTPhoton20CleanedL1R
+    process.patPhotonMatch = cleanPhotonTriggerMatchHLTPhoton20CleanedL1R.clone(pathNames=photonMatches)
+    switchOnTriggerMatchEmbedding( process, ['patPhotonMatch'], hltProcess=HLTMenu)
     #Jets
-    for i in range(len(jetMatches)):
-        setattr(process,'jetTriggerMatch'+jetMatches[i].replace('_','')+'AK5Calo',process.muonTriggerMatchHLTMu3.clone(pathNames=[jetMatches[i]],src = 'cleanPatJetsAK5Calo',filterIdsEnum = cms.vstring('TriggerJet')))
-        process.patTriggerMatcher += getattr(process,'jetTriggerMatch'+jetMatches[i].replace('_','')+'AK5Calo')
-        for jetType in theJetNames:
-            setattr(process,'jetTriggerMatch'+jetMatches[i].replace('_','')+jetType,process.muonTriggerMatchHLTMu3.clone(pathNames=[jetMatches[i]],src = 'cleanPatJets'+jetType,filterIdsEnum = cms.vstring('TriggerJet')))
-            process.patTriggerMatcher += getattr(process,'jetTriggerMatch'+jetMatches[i].replace('_','')+jetType)
-        setattr(process,'jetTriggerMatch'+jetMatches[i].replace('_','')+'PF',process.muonTriggerMatchHLTMu3.clone(pathNames=[jetMatches[i]],src = 'selectedPatJetsPF',filterIdsEnum = cms.vstring('TriggerJet')))
-        process.patTriggerMatcherPF += getattr(process,'jetTriggerMatch'+jetMatches[i].replace('_','')+'PF')
-        jetMatches[i] = 'jetTriggerMatch'+jetMatches[i].replace('_','')+'AK5Calo'
-    process.triggerMatchedPatJetsAK5Calo = process.cleanPatJetsTriggerMatch.clone(matches = jetMatches,src = 'cleanPatJetsAK5Calo')
-    process.patTriggerSequence += process.triggerMatchedPatJetsAK5Calo
+    from PhysicsTools.PatAlgos.triggerLayer1.triggerMatcher_cfi import cleanJetTriggerMatchHLTJet15U
+    process.patJetMatchAK5Calo = cleanJetTriggerMatchHLTJet15U.clone(pathNames=jetMatches,src='cleanPatJetsAK5Calo')
     for jetType in theJetNames:
-        setattr(process,'triggerMatchedPatJets'+jetType,process.triggerMatchedPatJetsAK5Calo.clone(src='cleanPatJets'+jetType, matches=[i.replace('AK5Calo',jetType) for i in jetMatches]))
-        process.patTriggerSequence += getattr(process,'triggerMatchedPatJets'+jetType)
-    process.triggerMatchedPatJetsPF = process.triggerMatchedPatJetsAK5Calo.clone(src='selectedPatJetsPF', matches=[i.replace('AK5Calo','PF') for i in jetMatches])
-    process.patTriggerSequencePF += process.triggerMatchedPatJetsPF
+        setattr(process,'patJetMatch'+jetType,cleanJetTriggerMatchHLTJet15U.clone(pathNames=jetMatches,src = 'cleanPatJets'+jetType))
+    process.patJetMatchPF = cleanJetTriggerMatchHLTJet15U.clone(src='selectedPatJetsPF', pathNames=jetMatches)
+    process.patTriggerSequencePF += process.patJetMatchPF
+    switchOnTriggerMatchEmbedding( process, ['patJetMatchAK5Calo'], hltProcess=HLTMenu)
+    #for jetType in theJetNames:
+    #    switchOnTriggerMatchEmbedding( process, ['patJetMatch'+jetType] )
+    switchOnTriggerMatchEmbedding( process, ['patJetMatchPF'], triggerProducer='patTriggerPF', sequence='patTriggerSequencePF', hltProcess=HLTMenu)
     #Taus
-    for i in range(len(tauMatches)):
-        setattr(process,'tauTriggerMatch'+tauMatches[i].replace('_',''),process.muonTriggerMatchHLTMu3.clone(pathNames=[tauMatches[i]],src = 'cleanPatTaus',filterIdsEnum = cms.vstring('TriggerTau')))
-        process.patTriggerMatcher += getattr(process,'tauTriggerMatch'+tauMatches[i].replace('_',''))
-        setattr(process,'tauTriggerMatch'+tauMatches[i].replace('_','')+'PF',process.muonTriggerMatchHLTMu3.clone(pathNames=[tauMatches[i]],src = 'selectedPatTausPF',filterIdsEnum = cms.vstring('TriggerTau')))
-        process.patTriggerMatcherPF += getattr(process,'tauTriggerMatch'+tauMatches[i].replace('_','')+'PF')
-        tauMatches[i] = 'tauTriggerMatch'+tauMatches[i].replace('_','')
-    process.triggerMatchedPatTaus = process.cleanPatTausTriggerMatch.clone(matches = tauMatches)
-    process.triggerMatchedPatTausPF = process.triggerMatchedPatTaus.clone(src='selectedPatTausPF',matches=[i+'PF' for i in tauMatches])
-    process.patTriggerSequence += process.triggerMatchedPatTaus
-    process.patTriggerSequencePF += process.triggerMatchedPatTausPF
-    process.patTriggerEvent.patTriggerMatches = electronMatches+muonMatches+tauMatches+jetMatches
-    #Remove dummy from sequence
-    process.patTriggerMatcher.remove(process.patJets)
-    process.patTriggerMatcherPF.remove(process.patJetsPF)
-    #Add PF trigger matching
+    from PhysicsTools.PatAlgos.triggerLayer1.triggerMatcher_cfi import cleanTauTriggerMatchHLTDoubleLooseIsoTau15
+    process.patTauMatch = cleanTauTriggerMatchHLTDoubleLooseIsoTau15.clone(pathNames = tauMatches)
+    process.patTauMatchPF = cleanTauTriggerMatchHLTDoubleLooseIsoTau15.clone(src='selectedPatTausPF', pathNames=tauMatches)
+    process.patTriggerSequencePF += process.patTauMatchPF
+    switchOnTriggerMatchEmbedding( process, ['patTauMatch'], hltProcess=HLTMenu)
+    switchOnTriggerMatchEmbedding( process, ['patTauMatchPF'], triggerProducer='patTriggerPF', sequence='patTriggerSequencePF', hltProcess=HLTMenu)
     process.patDefaultSequencePF += process.patTriggerSequencePF
 
 def addTypeIIMet(process) :
