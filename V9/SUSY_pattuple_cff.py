@@ -246,25 +246,31 @@ def loadPF2PAT(process,mcInfo,JetMetCorrections,extMatch,doSusyTopProjection,pos
 
 def loadPATTriggers(process,HLTMenu,theJetNames,electronMatches,muonMatches,tauMatches,jetMatches,photonMatches):
     #-- Trigger matching ----------------------------------------------------------
+    def pfSwitchOnTriggerMatchEmbedding(process, matches, src, embedder, sequence='patDefaultSequencePF'):
+        setattr(process,src.replace('PF','TriggerMatchPF'),getattr(process,embedder).clone(src=src, matches=matches))
+        theSequence = getattr(process,sequence)
+        theSequence += getattr(process,src.replace('PF','TriggerMatchPF'))
     from PhysicsTools.PatAlgos.tools.trigTools import switchOnTrigger, switchOnTriggerMatchEmbedding
     switchOnTrigger(process, triggerProducer='patTrigger', triggerEventProducer='patTriggerEvent', sequence='patDefaultSequence', hltProcess=HLTMenu)
     process.patTriggerPF = process.patTrigger.clone()
     process.patTriggerEventPF = process.patTriggerEvent.clone()
-    process.patTriggerSequencePF = cms.Sequence(process.patTriggerPF+process.patTriggerEventPF)
+    process.patDefaultSequencePF += process.patTriggerPF 
+    process.patDefaultSequencePF += process.patTriggerEventPF 
+    switchOnTrigger(process, triggerProducer='patTriggerPF', triggerEventProducer='patTriggerEventPF', sequence='patDefaultSequencePF', hltProcess=HLTMenu)
     #Electrons
     from PhysicsTools.PatAlgos.triggerLayer1.triggerMatcher_cfi import cleanElectronTriggerMatchHLTEle20SWL1R
     process.patElectronMatch = cleanElectronTriggerMatchHLTEle20SWL1R.clone(pathNames=electronMatches)
     process.patElectronMatchPF = cleanElectronTriggerMatchHLTEle20SWL1R.clone(pathNames=electronMatches, src='selectedPatElectronsPF')
-    process.patTriggerSequencePF += process.patElectronMatchPF
+    process.patDefaultSequencePF += process.patElectronMatchPF
     switchOnTriggerMatchEmbedding( process, ['patElectronMatch'], hltProcess=HLTMenu)
-    switchOnTriggerMatchEmbedding( process, ['patElectronMatchPF'], triggerProducer='patTriggerPF', sequence='patTriggerSequencePF', hltProcess=HLTMenu)
+    pfSwitchOnTriggerMatchEmbedding( process, ['patElectronMatchPF'], 'selectedPatElectronsPF', 'cleanPatElectronsTriggerMatch' )
     #Muons
     from PhysicsTools.PatAlgos.triggerLayer1.triggerMatcher_cfi import cleanMuonTriggerMatchHLTMu9
     process.patMuonMatch = cleanMuonTriggerMatchHLTMu9.clone(pathNames=muonMatches)
     process.patMuonMatchPF = cleanMuonTriggerMatchHLTMu9.clone(pathNames=muonMatches,src = 'selectedPatMuonsPF',matched='patTriggerPF')
-    process.patTriggerSequencePF += process.patMuonMatchPF
+    process.patDefaultSequencePF += process.patMuonMatchPF
     switchOnTriggerMatchEmbedding( process, ['patMuonMatch'], hltProcess=HLTMenu)
-    switchOnTriggerMatchEmbedding( process, ['patMuonMatchPF'], triggerProducer='patTriggerPF', sequence='patTriggerSequencePF', hltProcess=HLTMenu)
+    pfSwitchOnTriggerMatchEmbedding( process, ['patMuonMatchPF'], 'selectedPatMuonsPF', 'cleanPatMuonsTriggerMatch' )
     #Photons
     from PhysicsTools.PatAlgos.triggerLayer1.triggerMatcher_cfi import cleanPhotonTriggerMatchHLTPhoton20CleanedL1R
     process.patPhotonMatch = cleanPhotonTriggerMatchHLTPhoton20CleanedL1R.clone(pathNames=photonMatches)
@@ -272,22 +278,27 @@ def loadPATTriggers(process,HLTMenu,theJetNames,electronMatches,muonMatches,tauM
     #Jets
     from PhysicsTools.PatAlgos.triggerLayer1.triggerMatcher_cfi import cleanJetTriggerMatchHLTJet15U
     process.patJetMatchAK5Calo = cleanJetTriggerMatchHLTJet15U.clone(pathNames=jetMatches,src='cleanPatJetsAK5Calo')
+    process.cleanPatJetsTriggerMatchAK5Calo = process.cleanPatJetsTriggerMatch
     for jetType in theJetNames:
         setattr(process,'patJetMatch'+jetType,cleanJetTriggerMatchHLTJet15U.clone(pathNames=jetMatches,src = 'cleanPatJets'+jetType))
     process.patJetMatchPF = cleanJetTriggerMatchHLTJet15U.clone(src='selectedPatJetsPF', pathNames=jetMatches)
-    process.patTriggerSequencePF += process.patJetMatchPF
+    process.patDefaultSequencePF += process.patJetMatchPF
     switchOnTriggerMatchEmbedding( process, ['patJetMatchAK5Calo'], hltProcess=HLTMenu)
-    #for jetType in theJetNames:
-    #    switchOnTriggerMatchEmbedding( process, ['patJetMatch'+jetType] )
-    switchOnTriggerMatchEmbedding( process, ['patJetMatchPF'], triggerProducer='patTriggerPF', sequence='patTriggerSequencePF', hltProcess=HLTMenu)
+    process.cleanPatJetsTriggerMatchAK5Calo.src = 'cleanPatJetsAK5Calo'
+    process.cleanPatJetsTriggerMatchAK5Calo.matches = ['patJetMatchAK5Calo']
+    process.patTriggerSequence += process.cleanPatJetsTriggerMatchAK5Calo
+    for jetType in theJetNames:
+        switchOnTriggerMatchEmbedding( process, ['patJetMatch'+jetType], hltProcess=HLTMenu)
+        setattr(process, 'cleanPatJetsTriggerMatch'+jetType, getattr(process,'cleanPatJetsTriggerMatchAK5Calo').clone(matches = ['patJetMatch'+jetType],src='cleanPatJets'+jetType) )
+        process.patTriggerSequence += getattr(process,'cleanPatJetsTriggerMatch'+jetType)
+    pfSwitchOnTriggerMatchEmbedding( process, ['patJetMatchPF'], 'selectedPatJetsPF', 'cleanPatJetsTriggerMatch' )
     #Taus
     from PhysicsTools.PatAlgos.triggerLayer1.triggerMatcher_cfi import cleanTauTriggerMatchHLTDoubleLooseIsoTau15
     process.patTauMatch = cleanTauTriggerMatchHLTDoubleLooseIsoTau15.clone(pathNames = tauMatches)
     process.patTauMatchPF = cleanTauTriggerMatchHLTDoubleLooseIsoTau15.clone(src='selectedPatTausPF', pathNames=tauMatches)
-    process.patTriggerSequencePF += process.patTauMatchPF
+    process.patDefaultSequencePF += process.patTauMatchPF
     switchOnTriggerMatchEmbedding( process, ['patTauMatch'], hltProcess=HLTMenu)
-    switchOnTriggerMatchEmbedding( process, ['patTauMatchPF'], triggerProducer='patTriggerPF', sequence='patTriggerSequencePF', hltProcess=HLTMenu)
-    process.patDefaultSequencePF += process.patTriggerSequencePF
+    pfSwitchOnTriggerMatchEmbedding( process, ['patTauMatchPF'], 'selectedPatTausPF', 'cleanPatTausTriggerMatch' )
 
 def addTypeIIMet(process) :
     # Add reco::MET with Type II correction 
