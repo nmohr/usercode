@@ -10,6 +10,7 @@ import FWCore.ParameterSet.Config as cms
 
 def addDefaultSUSYPAT(process,mcInfo=True,HLTMenu='HLT',jetMetCorrections=['L2Relative', 'L3Absolute'],mcVersion='',theJetNames = ['IC5Calo','AK5JPT'],doValidation=False,extMatch=False,doSusyTopProjection=False,electronMatches=[],muonMatches=[],tauMatches=[],jetMatches=[],photonMatches=[]):
     loadPF2PAT(process,mcInfo,jetMetCorrections,extMatch,doSusyTopProjection,'PF')
+    addTagInfos(process,jetMetCorrections)
     if not mcInfo:
 	removeMCDependence(process)
     loadMCVersion(process,mcVersion,mcInfo)
@@ -162,7 +163,7 @@ def loadPF2PAT(process,mcInfo,jetMetCorrections,extMatch,doSusyTopProjection,pos
         process.tauMatchPF.matched = "mergedTruth"
         
     #Remove jet pt cut
-    process.pfJetsPF.ptMin = 0.
+    #process.pfJetsPF.ptMin = 0.
     #include tau decay mode in pat::Taus (elese it will just be uninitialized)
     process.patTausPF.addDecayMode = True
     process.patTausPF.decayModeSrc = "shrinkingConePFTauDecayModeProducerPF" 
@@ -327,6 +328,12 @@ def addTypeIIMet(process) :
         process.patMETs+
         process.patMETsAK5CaloTypeII
         )
+
+def addTagInfos(process,jetMetCorrections):
+    from PhysicsTools.PatAlgos.tools.jetTools import switchJetCollection
+    switchJetCollection( process,
+                     jetCollection=cms.InputTag('ak5CaloJets'),
+                     jetCorrLabel=('AK5Calo', jetMetCorrections))
 
 def addSUSYJetCollection(process,jetMetCorrections,jets = 'IC5Calo',mcVersion='',doJTA=False,doType1MET=False,doJetID=True,jetIdLabel=None):
     from PhysicsTools.PatAlgos.tools.jetTools import addJetCollection
