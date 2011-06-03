@@ -1,0 +1,111 @@
+\section{Fake background measurement}\label{sec:fakes}
+
+The fake lepton background can be measured using an isolation template method~\cite{suspas10001}. From prompt leptons in Z events or from MC, an isolation template for signal leptons can be obtained. We use a data-driven template from the sPlot technique (Sec.~\ref{sec:splot}) to verify, that the isolation is well described by the simulation (Sec.~\ref{sec:physobjects}).
+We then use the isolation distribution from simulated prompt leptons in Z boson (includes Drell-Yan) events 
+to obtain a signal shape, which are close enough to the isolation distribution in our final signal region.
+Using the prompt leptons in this sample, the isolation template is created by fitting a Breit-Wigner convoluted with a gaussian to the isolation distribution (Fig.~\ref{fig:promptMu_fit} shows the signal template for muons and Fig.~\ref{fig:promptEle_fit} displays it for electrons). 
+
+The background component of the lepton isolation distribution, consisting of fake leptons and leptons emerging from decays of heavy quarks, is fitted using a landau function. Figure~\ref{fig:backMu_fit} (muons) and Figure~\ref{fig:backEle_fit} (electron) display the isolation distribution for a di-jet event selection with $\HT > 200$~GeV and $\MET < 20$~GeV. We select only events with one reconstructed lepton to supress the Z contribution. Based on simulation the selection yields a relatively pure QCD sample, while there is still some remaining signal contamintaion for low isolation. The signal contamination leads to a slight overestimation of the fake component. The fitted landau describes the shapes reasonably well. We excluded low isolation region in the fit to test the impact on the prediction and find a shift of 10\%, which is covered by the systematic uncertainty as discussed later.
+
+\begin{figure}[hbtp]
+  \subfigure[]{\label{fig:promptMu_fit}\includegraphics[width=0.49\textwidth]{promptFit_muon.pdf}}\hfill
+  \subfigure[]{\label{fig:backMu_fit}\includegraphics[width=0.49\textwidth]{backFit_muon.pdf}}\hfill
+  \subfigure[]{\label{fig:promptEle_fit}\includegraphics[width=0.49\textwidth]{promptFit_electron.pdf}}\hfill
+  \subfigure[]{\label{fig:backEle_fit}\includegraphics[width=0.49\textwidth]{backFit_electron.pdf}}\hfill
+  \subfigure[]{\label{fig:fakeLeptElectron}\includegraphics[width=0.49\textwidth]{combinedFit_pfLeptSusyElectron}}\hfill
+  \subfigure[]{\label{fig:fakeLeptMuon}\includegraphics[width=0.49\textwidth]{combinedFit_pfLeptSusyMuon}}\hfill
+  
+  \caption{Fit of the isolation distribution of prompt leptons in a Z simulation sample to create an isolation
+    template~\subref{fig:promptMu_fit}. The background muon contribution (di-jet selection on data based on $\HT > 200$~GeV and $\MET < 20$) can be described by a landau
+    function~\subref{fig:backMu_fit}. Using the determined isolation template, the number of signal and background leptons in
+    the final event selection can be predicted. The fit in the control region (Sec.~\ref{sec:ofossubtraction}) is shown in \subref{fig:fakeLeptElectron} for electrons and \subref{fig:fakeLeptMuon} muons. The measured purity is similar to the expectation from simulation.} %on a $100~\pbi$ MC sample~\subref{fig:combMu_fit}. The dashed curves represent the parts of the fit for the signal (red) and background (green), while the blue line is the combination. The solid histogramms respresent the true contribution of each source in MC.}
+\end{figure}
+
+Using this method, the purity of the final lepton selection and hence the fake component in the final event selection can be predicted. 
+
+To measure the purity all analysis cuts (including \HT and \MET selection), except the isolation requirement on both leptons,
+are applied. In this sample the purity can be determined by the a simultaneous fit to the signal template, background template and lepton isolation distribution in the final event selection.
+Figure~\ref{fig:fakeLeptElectron} shows the fit of the purity for electrons in the control region (Sec.~\ref{sec:ofossubtraction}) and Fig.~\ref{fig:fakeLeptMuon} displays the fit int the same region for the muon sample.
+From the impurity ($0.024\pm0.005$ for electrons and $0.013\pm0.002$ for muons) we calculate the predicted 
+number of fakes in Sec.~\ref{sec:ofossubtraction}.
+The fit in the signal region is shown in Fig.~\ref{fig:fakeHadElectron} for electrons
+and Fig.~\ref{fig:fakeHadMuon} displays it for muons.
+All additional isolation fits are shown in Appendix~\ref{app:fakefits} as well.
+
+To obtain the fake-yields in the di-electron, di-muon and cross-channel one simply
+multiplies the number of candidates in the desired event selection by the impurity.
+Here we neglect double-fake events, since in the final signal selection, the expected number of single
+fake leptons is already small.
+
+The measured impurity in the final selection and in the control region is found to be smaller than 10-5\%
+for the full lepton selection. A closure test on first W Boson data is performed in~\cite{suspas10001}.
+
+We have tested the closure of the method in simulation in the control region 
+(fits are shown in Fig.~\ref{fig:fakeMCClosureElectron} and Fig.~\ref{fig:fakeMCClosureMuon}). 
+We compare the fake yield with the observed events from 
+heavy flavour and fake leptons and find a good closure.
+For electrons we predict $5.1\pm0.6$ compared to 4 fakes in MC truth
+and for muons we predict $4.8\pm0.4$ compared to 3 fakes in MC truth.
+
+On real data the closure of the method is tested in a W dominated region with
+$\MET > 30$~GeV and $\HT>200$~GeV and the fits are shown in
+Fig.~\ref{fig:fakeWElectron} and Fig.~\ref{fig:fakeWMuon}.
+We observe good agreement of the prompt yield between electron 
+and muon channels, but the fake yield differs, because of the
+cleaner muon sample.
+
+\subsection{Systematic uncertainty of the method}
+
+The isolation shape is senstive to the lepton $p_T$ distribution which can differ between
+between the QCD selection where we derive the template from and the final signal
+selection, where we apply the isolation fit.
+To assign a systematic uncertainty due to the sampling of the isolation distribution
+we test the closure in a background dominated region with $\MET < 20$~GeV and exactly one 
+non-isolated lepton passing all identification cuts. Table~\ref{tab:ptVariation} shows the observed
+and and predicted number of fakes, when the $p_T$ of the leptons is varied.
+We find a variation of up to 40\%, when we vary the lepton $p_T$, which gives the largest
+part of the systematic uncertainty of the method.
+Table~\ref{tab:htVariation} shows the observed
+and and predicted number of fakes, when the \HT of the selction is varied.
+The variation with \HT is not as strong as for the lepton $p_T$ and we find a variation of 30\%.
+
+\begin{table}[hbtp]
+\caption{Variation of prediction vs. obeservation for lepton candidates with different $p_T$'s in a background dominated region with $\MET < 20$~GeV, $\HT > 200$~GeV and exactly one lepton.\label{tab:ptVariation}}
+\begin{center}
+\begin{tabular}{|l||c|c|c|c|} \hline
+   $p_T$ [GeV]   &   10-15 &  15-20  & 20-25 & 25-60 \\\hline \hline
+Electron pred./obs. &   55/68    & 45/32 & 34/24 & 93/80 \\\hline  
+Relative change &   -20\%    & +40\% & +41\% & +16\% \\\hline  
+Muon pred./obs. &   26/31    & 12/19 & 12/14 & 34/26 \\\hline  
+Relative change &   -17\%    & -37\% & +15\% & +36\% \\\hline  
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{table}[hbtp]
+\caption{Variation of of prediction vs. obeservation for lepton candidates with different \HT in a background dominated region with $\MET < 20$ and exactly one lepton.\label{tab:htVariation}}
+\begin{center}
+\begin{tabular}{|l||c|c|c|c|} \hline
+   \HT [GeV]   &  100-120   &  140-160  & 200-300  & $> 300$ \\\hline \hline
+Electron &   338/391    & 300/267 & 221/178 & 46/52 \\\hline  
+Relative change &   -14\%    & +12\% & +24\% & -12\% \\\hline  
+Muon &   116/116    & 80/83 & 150/135 & 28/20 \\\hline  
+Relative change &   -    & -4\% & +12\% & +40\% \\\hline  
+\end{tabular}
+\end{center}
+\end{table}
+
+
+In total we assign a systematic uncertainty of 50\% on the prediction.
+
+%Figure~ shows the fits in the control and signal region on data, which we use
+%to derive the fake-prediction in the control region (Sec.~\ref{sec:ofossubtraction}) and 
+%signal region Sec.~\ref{sec:results}.
+
+%{\textcolor{red} To give a more comprehensive overview over the fake template method, we will add more plots 
+%that show the dependence of the background template on the sample composition, 
+%$p_T$ of the leptons and the $\HT$ in the event. This will be added to the next version.}
+
+
+%As a closure test, events are selected according to the opposite sign selection described in Section~\ref{sec:os_selection}. Muons are requested to fulfill all quality requirements described in Table~\ref{tab:Muons} except for the isolation requirement. Then, the previously determined signal template together with a landau function for the background muon contribution is fitted to the isolation distribution of the muons in the final event selection (Fig.~\ref{fig:combMu_fit}). Finally, the number of signal leptons and the number of background leptons as well as mean and width of the background distribution are determined. From the $7~\TeV$ MC scaled to a luminosity of $100~\pbi$, the following results are calculated:
+

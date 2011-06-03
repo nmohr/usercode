@@ -1,0 +1,75 @@
+\section{Systematic uncertainties}\label{sec:systematics}
+
+Systematic uncerteinties arise from uncertainties of the event selection
+expected in simulation compared to the performance from the actual detector.
+A global normalisation uncertainty comes from an uncertainty on the total 
+integrated luminosity of 11\%~\cite{lumiCMS}.
+
+\subsection{Systematic uncertainty for the lepton selection}
+
+We do observe a good agreement from tag and probe within 2\%.
+In simulation the difference of the lepton
+selection between Z+jets and top-pair events is within 7\%,
+which we use as a systematic uncertainty.
+The inclusive lepton efficiency of leptons in the mSUGRA
+benchmark points differ by 25\% to the efficiency measured
+at the Z resonace. 
+However this drop in efficiency is simulated by the MC.
+We take 10\% uncertainty on the leptonic part as a systematic uncertainty in the
+limit setting procedure.
+
+\subsection{Pile-up}
+
+Since the lepton efficiency is measured including pile-up, we  include the effect
+and do not correct for the difference in lepton selection efficiency.
+Nevertheless pile-up has some effect on the jet and missing transvers energy 
+selection. It has been studied in simulation and found to be negligible for the high \HT
+and \MET selection.
+Therefore no additional uncertainty is assigned to account for
+pile-up.
+For leptons above 10~GeV the effect of pile-up in the isolation is below 3\%
+per lepton and therefore we do not assign an additional systematic uncertainty.
+
+\subsection{Uncertainty on the hadronic selection}
+
+The uncertainty on the jet-energy-scale is smaller than 5\% for
+particle flow jets~\cite{jetMETUncertainty}. This uncertainty
+directly translates into a scale uncertainty on the \HT selection.
+For particle flow MET and uncertainty on the scale of 5\% is assumed~\cite{pfMETUNcertainty}.
+We vary both fully correlated and find that it changes the acceptance
+at LM0 by 12\%, while the change at LM1 is smaller (5\%).
+We take this as systematic uncertainty in the limit setting method.
+The uncertainty in the $t\bar{t}$-sample is found to be 30\%
+in the final signal selection, while it is smaller in the leptonic control region (7\%). 
+This enters the predicted number from simulation.
+
+\subsection{Uncertainty on the fake background prediction}
+
+For the fake-component of the background a uncertainty of 50\% is assumed,
+which is described in detail in Sec.~\ref{sec:fakes}.
+
+The main uncertainty for the opposite flavour subtraction arises from
+the uncertainty on the lepton selection in a hadronic event environment.
+While the inclusive efficiency for leptons originating from the Z-Boson
+can be determined with a systematic uncertainty of 2\%, it cannot be 
+determined with that precision in the kinematic regime of the search.
+Therefore the difference between the efficiency from the Z and $t\bar{t}$
+is assumed as a systematic uncertainty (5\%).
+
+The systematic uncertainties on the yields from simulation are
+summarised in Tab.~\ref{tab:systematics}.
+
+\begin{table}[hbtp]
+\caption{Summary of the systematic uncertainties for \label{tab:systematics}}
+\begin{center}
+\begin{tabular}{|l||c|c|c|} \hline
+Systematic uncertainty    &   $t\bar{t}$   &   LM0        & LM1\\\hline \hline
+Cross-section &   39\% & -    &- \\\hline  
+\HT + \MET &   30\% & 12\%    &5\% \\\hline  
+Lepton &   10\% & 15\%    &15\% \\\hline  
+Luminosity &   11\% & 11\%    &11\% \\\hline\hline
+Total &   51\% & 22\%    &19\% \\\hline  
+\end{tabular}
+\end{center}
+\end{table}
+

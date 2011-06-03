@@ -1,0 +1,120 @@
+\subsection{Trigger in the leptonic event selection}
+
+In this selection we use an or of the follwing leptonic high level trigger (HLT) paths
+\begin{itemize}
+\item
+HLT\_Mu9 
+\item HLT\_Mu11 
+\item HLT\_Mu15 
+\item HLT\_Mu9\_v1 
+\item HLT\_Mu11\_v1 
+\item HLT\_Mu15\_v1 
+\item HLT\_DoubleMu3 
+\item HLT\_DoubleMu3\_v2 
+\item HLT\_DoubleMu5\_v1 
+\item HLT\_Mu5\_Ele5\_v1 
+\item HLT\_Mu5\_Ele9\_v1 
+\item HLT\_Mu11\_Ele8\_v1 
+\item HLT\_Mu8\_Ele8\_v1 
+\item HLT\_Mu5\_Ele13\_v2 
+\item HLT\_Mu5\_Ele13\_v2 
+\item HLT\_Mu5\_Ele17\_v1 
+\end{itemize}
+on the muon stream. We veto these triggers on the electron stream,
+but use the following triggers
+\begin{itemize}
+\item HLT\_Ele17\_SW\_TightEleId\_L1R 
+\item HLT\_Ele17\_SW\_TighterEleId\_L1R\_v1 
+\item HLT\_DoubleEle15\_SW\_L1R\_v1 
+\item HLT\_DoubleEle17\_SW\_L1R\_v1 
+\item HLT\_Ele17\_SW\_TightCaloEleId\_Ele8HE\_L1R\_v1 
+\item HLT\_Ele17\_SW\_TightCaloEleId\_SC8HE\_L1R\_v1 
+\item HLT\_DoubleEle10\_SW\_L1R 
+\item HLT\_DoubleEle5\_SW\_L1R 
+\item HLT\_Ele17\_SW\_CaloEleId\_L1R 
+\item HLT\_Ele17\_SW\_EleId\_L1R 
+\item HLT\_Ele17\_SW\_LooseEleId\_L1R 
+\item HLT\_Ele15\_SW\_CaloEleId\_L1R 
+\item HLT\_Ele15\_SW\_EleId\_L1R 
+\item HLT\_Ele15\_SW\_L1R 
+\item HLT\_Ele15\_LW\_L1R 
+\item HLT\_Ele20\_SW\_L1R 
+\item HLT\_Ele10\_SW\_EleId\_L1R 
+\item HLT\_Ele10\_LW\_EleId\_L1R 
+\item HLT\_Ele10\_LW\_L1R 
+\item HLT\_Ele10\_SW\_L1R 
+\item HLT\_Ele17\_SW\_TighterEleIdIsol\_L1R\_v2 
+\item HLT\_Ele22\_SW\_TighterEleId\_L1R\_v2 
+\item HLT\_Ele32\_SW\_TightCaloEleIdTrack\_L1R\_v1 
+\item HLT\_Ele32\_SW\_TighterEleId\_L1R\_v2 
+\item HLT\_Ele27\_SW\_TightCaloEleIdTrack\_L1R\_v1 
+\item HLT\_Ele22\_SW\_TighterCaloIdIsol\_L1R\_v2 
+\item HLT\_Ele22\_SW\_TighterEleId\_L1R\_v3 
+\item LT\_Ele22\_SW\_TighterCaloIdIsol\_L1R\_v2
+\end{itemize}
+to select the events. 
+The trigger efficiency is measured elsewhere.
+
+\subsection{Leptonic triggered event selection}
+
+\begin{figure}[hbtp]
+  %\subfigure[]{\label{fig:plot_ht}\includegraphics[width=0.49\textwidth]{Nov8th_pfHadSusyCuts_PD_MultiJet_pfHT_HTN1.pdf}}\hfill
+  \subfigure[]{\label{fig:plot_met}\includegraphics[width=0.49\textwidth]{Nov8th_pfHadSusyCuts_PD_MultiJet_MET_METN1.pdf}}\hfill
+  \subfigure[]{\label{fig:plot_had_mm_metN1}\includegraphics[width=0.49\textwidth]{Nov8th_pfHadSusyCuts_PD_MultiJet_iOSmm_ImmMETN1.pdf}}\hfill
+  \subfigure[]{\label{fig:plot_had_ee_metN1}\includegraphics[width=0.49\textwidth]{Nov8th_pfHadSusyCuts_PD_MultiJet_iOSee_IeeMETN1.pdf}}\hfill
+  \subfigure[]{\label{fig:plot_had_ofos_metN1}\includegraphics[width=0.49\textwidth]{Nov8th_pfHadSusyCuts_PD_MultiJet_iOSOF_OFOSMETN1.pdf}}\hfill
+  \caption{Control plots for the hadronic triggered event selection. %The \HT distribution after the opposite sign lepton selection is shown in \subref{fig:plot_ht}. 
+      The distribution of the missing transverse energy after all cuts except \MET is shown in~\subref{fig:plot_met}.  The invariant mass distributions without \MET cut are shown in \subref{fig:plot_had_mm_metN1} for di-muons, in \subref{fig:plot_had_ee_metN1} for di-electrons and in \subref{fig:plot_had_ofos_metN1} for the flavour symmetric component. The SM backgrounds are stacked, while the data is overlayed.}
+\end{figure}
+
+In the non Z region we define the signal region as follows.
+Two opposite sign leptons with
+at least 20~GeV for the first lepton and at least 10~GeV for the second. 
+We require two jets above $p_T > 30$~\GeV,
+an $\HT> 100$~GeV and $\MET> 60$~GeV. Based on MC this selection is at the very tail of 
+the instrumental \MET distribution from Z boson production and consists mainly
+of t$\bar{t}$-pair-events.
+To subtract this background we perform the opposite flavour subtraction.
+
+\subsection{Z box selection}
+To look for an excess in Z boson production accompanied by jet production including \MET, 
+we define a signal region as follwos. Two corelated opposite sign dileptons ($ee$ and $\mu\mu$)
+ with 20~GeV within an invariant mass window of $81 < m_{ll} < 101$.
+ We require two jets above $p_T > 30$~\GeV
+and $\MET> 60$~GeV. Based on MC this selection is at the very tail of 
+the instrumental \MET distribution from Z boson production and consists mainly
+of t$\bar{t}$-pair-events.
+To subtract this background we perform the opposite flavour subtraction in two different ways.
+Count the number of events in the $e\mu$-distribution in the signal window. This method
+is statistically very limited since one expects only 7 events in the signal window.
+To enhance the statistical power we use the ratio of $t\bar{t}$-events inside the
+signal-box 
+\begin{equation}
+r_{t\bar{t}} = \frac{N_{76<m_{ll}<106}}{N_{total}} = 0.225 \pm 0.001 (stat.).
+\end{equation}
+
+The distribution of events is shown in Fig.\ref{fig:ofos_Z}. 
+
+\begin{figure}[hbtp]
+  \subfigure[]{\label{fig:ofos_Z}\includegraphics[width=0.79\textwidth]{ofSubtractionZCase.pdf}}\hfill
+  \caption{The opposite flavour subtraction in the signal region.}
+\end{figure}
+
+We obtain the numbers listed in Tab.~\ref{tab:ofosZ}.
+
+\begin{table}[hbtp]
+\caption{Predicted number of $t\bar{t}$-events using the two described methods. \label{tab:ofosZ}}
+\begin{center}
+\begin{tabular}{|l||c|c|} \hline
+Channel    &   Extrapolation & Plain\\\hline \hline
+$e\mu$& $31\pm$?? & 7$\pm$?? \\\hline  
+$ee$&  $2\pm$??  & $\pm$?? \\\hline  
+$\mu\mu$ & $4\pm$?? & $4\pm$??\\\hline  
+\end{tabular}
+\end{center}
+\end{table}
+
+
+
+
+

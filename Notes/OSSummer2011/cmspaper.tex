@@ -1,0 +1,197 @@
+\RequirePackage{lineno}
+\documentclass{cmspaper}
+
+\def\be{\begin{equation}}
+\def\ee{\end{equation}}
+\def\met{\not\!\!\vec{E}_{T}}
+
+\usepackage[pdftex]{graphicx}
+\usepackage{subfigure}
+\usepackage{url}
+\usepackage{setspace}
+\usepackage{color}
+
+
+\usepackage{amsmath}
+\usepackage[amssymb,thinspace]{SIunits}
+
+
+% own commands
+%=====================
+\newcommand{\pT}{\ensuremath{p_\perp}}
+\newcommand{\Et}{\ensuremath{E_\perp}}
+\newcommand{\dpt}{\ensuremath{\delta \pT/\pT}}
+\newcommand{\dE}{\ensuremath{\delta E/E}}
+\newcommand{\TeV}{\tera\electronvolt}
+\newcommand{\GeV}{\giga\electronvolt}
+\newcommand{\MeV}{\mega\electronvolt}
+\newcommand{\cm}{\centi\meter}
+\newcommand{\mm}{\milli\meter}
+\newcommand{\mum}{\micro\meter}
+\newcommand{\nm}{\nano\meter}
+\newcommand{\kg}{\kilo\gram}
+%\newcommand{\ns}{\nano\second}
+\newcommand{\pb}{\pico\barn}
+\newcommand{\pbi}{\ensuremath{\pb^{-1}}}
+\newcommand{\nb}{\nano\barn}
+\newcommand{\nbi}{\ensuremath{\nb^{-1}}}
+\newcommand{\MET}{\ensuremath{\displaystyle{\not} E_T~}}
+\newcommand{\HT}{\ensuremath{H_T~}}
+\newcommand{\TODO}{{\bf TODO}}
+
+
+\begin{document}
+
+%\doublespacing
+%\setpagewiselinenumbers
+%\modulolinenumbers[5]
+\linenumbers
+
+
+%==============================================================================
+% title page for few authors
+
+\begin{titlepage}
+
+% select one of the following and type in the proper number:
+   \cmsnote{20010/???}
+%  \internalnote{2005/000}
+%  \conferencereport{2005/000}
+   \date{27 October 2010}
+
+  \title{Opposite sign di-lepton SUSY search at $\sqrt{s}=7$~TeV}
+
+  \begin{Authlist}
+      M.~Edelhoff, L.~Feld, N.~Mohr, D.~Sprenger
+       \Instfoot{iphysb}{I. Physikalisches Institut B, RWTH Aachen University, Germany}
+  \end{Authlist}
+
+  \begin{abstract}
+  We present a search for Supersymmetry in opposite sign di-lepton final states 
+  using the data from 2010 proton-proton-running of the Large Hadron Collider. 
+  %The full event selection is based purely on the particle flow event reconstruction.
+  The final state signature consists of leptons, several hard jets 
+  and missing transverse energy. 
+  Since we observe good agreement of data to simulation and our background prediction methods,
+  we conclude that there is no sign of flavour correlated di-lepton production 
+  accompanied by high jet activity and large missing transverse energy in the dataset of 34~\pbi.
+  We report an upper limit on the flavour correlated production of a new physics model within
+  acceptance of our event selection.
+  \end{abstract} 
+
+\note{Preliminary version}
+  
+\end{titlepage}
+
+\setcounter{page}{2}%JPP
+
+\tableofcontents 
+
+\graphicspath{{plots/}}
+
+% main part
+%============
+\input{introduction}
+\input{signal}
+\input{physicsobjects}
+\input{efficiency}
+%\input{fakebackground}
+\input{eventselection}
+%\input{xsection}
+\input{ofossubtraction}
+%\input{jzbalance}
+\input{results}
+\input{systematics}
+\input{significance}
+\input{conclusion}
+%============
+
+
+
+\section{Acknowledgements}
+
+\begin{thebibliography}{9}
+    \bibitem{softsusy} B.C.~Alanach, {\em "SOFTSUSY: a program for calculating supersymmetric spectra"}, Comput.Phys.Commun. 143:305-331, 2002
+    
+    \bibitem{susyhit} A.~Djouadi et al, {\em Decays of Supersymmetric Particles: the program SUSY-HIT (SUspect-SdecaY-Hdecay-InTerface)} ActaPhys.Polon. B38:635-644, 2007.
+
+    \bibitem{pythia} T.~Sjostrand et al, {\em "PYTHIA 6.4 Physics and Manual"}, JHEP 0605:026, 2006
+
+    \bibitem{prospino} W.~Beenakker et al, {\em "Squark and Gluino Production at Hadron Colliders"}, Nucl.Phys. B492:51-103, 1997
+    
+    \bibitem{zprod} The CMS Collaboration, {\em "Study of the Z production in association with jets in proton-proton collisions at $\sqrt{s}=10$~TeV with the CMS detector at the CERN LHC"}, CMS Physics Analysis Summary JME-08-006
+
+    
+    %\bibitem{alpgen} M.L.~Mangano et al, {\em "ALPGEN, a generator for hard multiparton processes in hadronic collisions"}, JHEP 0307:001, 2003
+
+    \bibitem{antiKT} M.~Cacciar et al, {\em "The anti-$k_t$ jet clustering algorithm"}, JHEP 0804:063, 2008
+
+    \bibitem{madgraph} J.~Alwall et al, {\em "MadGraph/MadEvent v4: The New Web Generation"}, JHEP 0709:028, 2007
+    
+    \bibitem{ttkfactor} M.~Cacciari et al, {\em "Updated predictions for the total production cross sections of top and of heavier quark pairs at the Tevatron and at the LHC"}, JHEP 0809:127, 2008
+    
+    \bibitem{WZkfactor} S.~Frixione, M.L.~Mangano, {\em "How accurately can we measure the W cross section?"}, JHEP 0405:056, 2004
+    
+    \bibitem{sPlot} M.~Pivk and F.R.~Le~Diberder, {\em A statistical tool to unfold data distributions}, arXiv:physics/0402083    
+
+    \bibitem{vplus} V+jets wiki, \url{https://twiki.cern.ch/twiki/bin/view/CMS/VplusJets}
+
+    \bibitem{muons} M.~Mulders et al. {\em "Muon Identification in CMS"}, CMS Analysis Note 2008/098
+    
+    \bibitem{electrons} J.~Branson et al. {\em "A cut based method for electron identification in CMS"}, CMS Analysis Note 2008/082
+
+    \bibitem{pfelectrons} F.~Beaudette et al. {\em "Electron Reconstruction within the Particle Flow Algorithm"}, CMS Analysis Note 2010/034
+    \bibitem{particleflow} M.~Bachtis et al. {\em "Commissioning of
+        the Particle-flow Event Reconstruction with the first LHC
+        collisions recorded in the CMS detector"}, CMS Analysis Note 2010/???
+     
+    \bibitem{SIScone} G.~P.~Salam, G.~Soyez, {\em "A practical Seedless Infrared-Safe Cone jet algorithm"}, JHEP 0705:086, 2007 
+    
+    \bibitem{mcjetcorrections} The CMS Collaboration, {\em "Plans for Jet Energy Corrections at CMS"}, CMS Physics Analysis Summary JME-07-002
+   
+    \bibitem{pfjetid}N. Saoulidou, {\em "Particle Flow Jet
+        Identification Criteria"}, CMS Analysis Note 2009/???
+
+    \bibitem{roofit} W.~Verkerke, D.~Kirkby, {\em "The RooFit toolkit for data modeling"}, arXiv:physics/0306116
+    
+    \bibitem{muonPerformance} The CMS Collaboration, {\em "Performance of muon identification in pp collisions at $\sqrt{s}= 7$~TeV"}, CMS Physics Analysis Summary MUO-10-002
+
+    \bibitem{suspas10001} The CMS Collaboration, {\em "Performance of Methods for Data-Driven Background Estimation in SUSY Searches"}, CMS Physics Analysis Summary SUS-10-001
+    
+    \bibitem{kostas} K.~Theofilatos et al. {\em "SUSY Searches in the $Z^0+3$ jets + \MET Final State with Data-driven Background Estimation"}, CMS Analysis Note 2009/132
+    
+    \bibitem{anil}  A.~Singh et al. {\em "SUSY in the $Z/\gamma*+$ Jet(s) + \MET Final State Using Particle Flow"}, CMS Analysis Note 2010/250
+    
+    \bibitem{avi} B.~Hooberman et al. {\em "Search for new physics in the opposite sign dilepton sample"}, CMS Analysis Note 2010/370
+    %\bibitem{METcorrections} The CMS Collaboration, {\em "$\not\!\!E_{T}$ performance in CMS"}, CMS Physics Analysis Summary JME-07-001
+
+    %\bibitem{electronTnP} The CMS Collaboration, {\em "Measuring Electron Efficiencies at CMS with Early Data"}, CMS Physics Analysis Summary EGM-07-001
+    
+    
+    %\bibitem{triggermenu} Lean Trigger Menu V0.3 wiki, \url{https://twiki.cern.ch/twiki/bin/view/CMS/TSG_18_II_09}
+    
+    %\bibitem{georgia} G.~Karapostoli et al., {\em "Dilepton + Jets + MET channel : Observation and Measurement of $\tilde{\chi}_2^0 \rightarrow \tilde{\chi}_1^0 ll$"}, CMS Note 2008/038
+
+
+    \bibitem{pileup} J.~Conway, \url{https://twiki.cern.ch/twiki/bin/view/CMS/PileupInformation}
+    \bibitem{bayes} J.~Conway, \url{http://www-cdf.fnal.gov/physics/statistics/code/bayes.f}
+    \bibitem{roostats} RooStats wiki, \url{https://twiki.cern.ch/twiki/bin/view/RooStats/WebHome}
+
+    %\bibitem{statistics} R.~D.~Cousins et al., {\em Evaluation of three methods for calculating statistical significance when incorporating a systematic uncertainty into a test of the background-only hypothesis for a Poisson process}, Nuclear Instruments and Methods in Physics Research A595:480-501, 2008
+    
+    \bibitem{lumiCMS} The CMS Collaboration, {\em "Measurement of CMS Luminosity"}, CMS Physics Analysis Summary EWK-10-004
+    
+    \bibitem{jetMETUncertainty} The CMS Collaboration, {\em "Jet Energy Corrections determination at $\sqrt{s}=7$~TeV"}, CMS Physics Analysis Summary JME-10-010
+    
+    \bibitem{pfMETUNcertainty} The CMS Collaboration, {\em "MET Performance in Events Containing Electroweak Bosons from pp Collisions at $\sqrt{s}=7$~TeV"}, CMS Physics Analysis Summary JME-10-005
+
+\end{thebibliography}
+
+\pagebreak
+\appendix
+
+
+
+
+
+\end{document}

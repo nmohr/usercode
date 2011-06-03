@@ -1,0 +1,350 @@
+\section{Physics objects}\label{sec:physobj}
+
+\subsection{PAT workflow}
+
+From the AOD samples so called Pat-Tuples have been created using the following 
+tags of the Physics Analysis Toolkit (PAT) in CMSSW\_4\_2\_X. 
+\begin{verbatim}
+cmsrel CMSSW_4_2_3
+cd CMSSW_4_2_3/src
+cmsenv
+addpkg PhysicsTools/PatAlgos    V08-06-25
+addpkg PhysicsTools/PatExamples V00-05-17
+
+# deterministic calculation of FastJet corrections
+addpkg RecoJets/Configuration                           V02-04-16
+addpkg RecoJets/JetAlgorithms                           V04-01-00      
+addpkg RecoJets/JetProducers                            V05-05-03
+
+addpkg MuonAnalysis/MuonAssociators                  V01-13-00
+addpkg PhysicsTools/Configuration                         V00-10-14
+
+addpkg RecoTauTag/RecoTau RecoTauDAVerticesPatch_V5  
+addpkg RecoTauTag/TauTagTools RecoTauDAVerticesPatch_V5
+addpkg RecoTauTag/Configuration RecoTauDAVerticesPatch_V5
+
+cvs co -d__temp__ -r1.1 UserCode/SuSyAachen/Configuration/python/pfTools.py
+/bin/mv __temp__/pfTools.py PhysicsTools/PatAlgos/python/tools
+rm -r __temp__
+
+
+cvs co -rV00-04-48 -dSuSyAachen UserCode/SuSyAachen
+\end{verbatim}
+
+All physics objects necessary for this analysis are included in the Pat-Tuples.
+
+\subsection{Datasets}
+
+We perform the analysis on events triggered by leptonic, hadronic
+and cross-object triggers
+and therefore use several primary datasets
+reconstructed in CMSSW\_4\_2\_X.
+All datasets used are listed in Tab.~\ref{tab:datadatasets}.
+\begin{table}[htdp]
+\caption{Datasets used in this analysis.}
+\label{tab:datadatasets}
+\begin{center}
+\begin{tabular}{|l|} \hline
+    DBS datasetpath    \\ \hline \hline % &   No. events    & Luminosity [pb$^{-1}$]   \\ \hline \hline
+/DoubleElectron/Run2011A-May10ReReco-v1/AOD \\ 
+/DoubleElectron/Run2011A-PromptReco-v4/AOD\\
+/DoubleMu/Run2011A-May10ReReco-v1/AOD\\ 
+/DoubleMu/Run2011A-PromptReco-v4/AOD\\
+/MuEG/Run2011A-May10ReReco-v1/AOD\\ 
+/MuEG/Run2011A-PromptReco-v4/AOD\\\hline
+/ElectronHad/Run2011A-May10ReReco-v1/AOD \\ 
+/ElectronHad/Run2011A-PromptReco-v4/AOD \\ 
+/MuHad/Run2011A-May10ReReco-v1/AOD \\
+/MuHad/Run2011A-PromptReco-v4/AOD\\\hline 
+/HT/Run2011A-May10ReReco-v1/AOD \\ 
+/HT/Run2011A-PromptReco-v4/AOD \\ \hline 
+\end{tabular}
+\end{center}
+\end{table}
+
+We select only events that enter the officially produced good-run-list
+\begin{verbatim}
+/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions11/7TeV/Reprocessing/
+Cert_160404-163869_7TeV_May10ReReco_Collisions11_JSON.txt
+\end{verbatim}
+and the total integrated luminosity amounts to
+\begin{equation}
+\mathcal{L}_{int} = (204\pm8)~\pbi.
+\end{equation}
+
+\subsection{Simulated datasets}
+
+All simulated samples from CMSSW\_4\_2\_X are listed in Tab~\ref{tab:alldataset}. 
+Please note that for the
+final version the proper Madgraph samples will be used (as soon as they are 
+available).
+ 
+\begin{table}[htdp]
+\caption{Used CMSSW datasets from 4\_2\_X.}
+\label{tab:alldataset}
+\begin{center}
+%\begin{small}
+\begin{tabular}{|l||c||c||c|} \hline
+ 	DBS datasetpath 	&	No. events 		&   $\sigma_{LO}$ [pb] & Name\\ \hline \hline
+/LMX\_SUSY\_sftsht\_7TeV-pythia6/Fall10-START38\_V12-v1/AODSIM & 200000 & varies & SUSY LMX\\ \hline
+/TTJets\_TuneZ2\_7TeV-madgraph-tauola/Fall10-START38\_V12-v2/AODSIM& 1443404 & 90& tt+jets\\ \hline
+/DYJetsToLL\_TuneZ2\_M-50\_7TeV-madgraph-tauola/Fall10-START38\_V12-v2/AODSIM & 1084921 & 2350& Z+jets\\ \hline
+/WToENu\_TuneZ2\_7TeV-pythia6/Fall10-START38\_V12-v1/AODSIM & 189069 & 8057& W+jets\\ \hline
+/WToMuNu\_TuneZ2\_7TeV-pythia6/Fall10-START38\_V12-v1/AODSIM & 189069 & 8057& W+jets\\ \hline
+/WToTauNu\_TuneZ2\_7TeV-pythia6/Fall10-START38\_V12-v1/AODSIM & 189069 & 8057& W+jets\\ \hline
+/QCD\_TuneD6T\_HT-100To250\_7TeV-madgraph/Fall10-START38\_V12-v1/AODSIM & 10842371 & 7000000 & QCD\\ \hline
+/QCD\_TuneD6T\_HT-250To500\_7TeV-madgraph/Fall10-START38\_V12-v1/AODSIM & 4873036 & 171000 & QCD\\ \hline
+/QCD\_TuneD6T\_HT-500To1000\_7TeV-madgraph/Fall10-START38\_V12-v1/AODSIM & 4034762 & 520& QCD\\ \hline
+/QCD\_TuneD6T\_HT-1000ToInf\_7TeV-madgraph/Fall10-START38\_V12-v1/AODSIM & 1541261 & 83 & QCD\\ \hline
+%\multicolumn{3}{|l|}{$^{\dagger}$GEN-SIM-DIGI-RECO} \\ \hline
+\end{tabular}
+%\end{small}
+\end{center}
+\end{table}
+
+Each dataset is scaled to the desired luminosity if not illustrated differently. 
+Additionally a k-factor has been applied for some of the datasets.
+The MC is reweighted to correct for the difference in the vertex
+multiplicity distribution as described in \cite{pileup}.
+
+\subsection{Common event selection}\label{sec:cleanup}
+To select good collision events we require the event to contain a good primary vertex,
+which has to pass the following conditions
+\begin{verbatim}
+!isFake
+ndof > 4
+abs(z) <= 24
+position.Rho <= 2.
+\end{verbatim}
+
+\subsection{Muons}\label{sec:muons}
+
+ The acceptance of the muons is restricted to $p_T>5$~GeV %(Fig.~\ref{fig:muon_pt}) 
+and $|\eta|<2.4$. 
+Each muon has to be identified as a global muon and tracker muon. 
+The track of the muon in the inner tracker has to have at least 11 hits
+and a $\chi^2/ndf$ of the global muon track below 10. 
+The impact parameter of the muon track with respect to the position of the first 
+deterministic annealing (DA) vertex is 
+required to be below $200$~$\mu$m in $x$-$y$ and within $1$~cm in $z$.
+Additionally we require the muons to be well measured by the request that the
+relative error from the track-fit is below 10\%. 
+The combined energy sum in cone of size dR = 0.3 around each muon has
+to be smaler than 15\% of its energy.
+All cuts are summarised in Table~\ref{tab:Muons}.
+
+    \begin{table}[hbtp]
+    \caption{Overview of the muon selection.\label{tab:Muons}}
+    \vspace{0.4cm}
+    \begin{center}
+    \begin{tabular}{|c||c||c|} \hline
+Name&Pat memberfunction & Cut\\\hline \hline
+p$_{T}$ & pt() & $\ge 5.$ \\\hline 
+$|\eta|$ & abs(eta()) & $\le 2.4$ \\\hline 
+GlobalPromptTight& muonID( 'GlobalMuonPromptTight' ) & \\\hline 
+TrackerMuon& isTrackerMuon() & \\\hline 
+Number of hits& track.numberOfValidHits  & $\ge 11$\\\hline 
+%Number of pixel hits& track.numberOfValidPixelHits  & $\ge 1$\\\hline 
+Good track fit& track.ptError()/track.pt()  & $\leq 0.1$\\\hline 
+Impact parameter& abs(dxy(pv))  & $ \le 0.02$\\\hline 
+Impact parameter& abs(dz(pv))  & $ \le 1$\\\hline 
+Isolation& (isolationR03().hadEt + isolationR03().emEt + isolationR03().sumPt) / pt  & $\le 0.15$\\\hline 
+\end{tabular}
+    \end{center}
+    \end{table}
+
+
+\subsection{Electrons}\label{sec:electrons}
+
+%The electron collection~\cite{electrons} is derived from the particle flow electron collection and provided by PF2PAT. 
+The acceptance of the electrons is restricted to $p_T>10$~GeV %(Fig.~\ref{fig:electron_pt}) 
+and $|\eta|<2.5$. 
+We restrict ourselves to the ECALs fiducial volume,
+thus exclude electrons within $1.4442 < \eta < 1.566$.
+
+%(Fig.~\ref{fig:electron_eta}) 
+Additionally, a conversion rejection
+is performed requiring that the electron track has maximally one lost hit in the tracker.
+We remove electrons from conversions via partner track finding, i.e. if there is a general track within
+$Dist < 0.02$~cm and $\Delta \cot \theta < 0.02$ \cite{conv}.
+The impact parameter of the electron track with respect to the position 
+of the primary DA vertex position is required to be 
+below $400$~$\mu$m in $x$-$y$ and smaller than $1$~cm in $z$.
+The cuts are summarised in Table~\ref{tab:Electrons}.
+
+    \begin{table}[hbtp]
+    \caption{Overview of the electron selection.\label{tab:Electrons}}
+    \vspace{0.4cm}
+    \begin{center}
+    \begin{tabular}{|c||c||c|} \hline
+Name&Pat memberfunction & Cut\\\hline \hline
+p$_{T}$ & pt() & $\ge 5.$ \\
+$|\eta|$ & abs(eta()) & $\le 2.4$ \\\hline 
+Identification & WP95 &  \\\hline 
+%Energy over momentum& eSuperClusterOverP & $\le$ 1.7 \\\hline 
+Lost hits& gsfTrack--\textgreater trackerExpectedHitsInner().numberOfHits()  & $\le 1$\\
+Partner track finding&  !($|Dist|  and |\Delta \cot \theta|$ )  & < 0.02\\\hline 
+Impact parameter& abs(dxy(pv))  & $ \le 0.04$\\ 
+Impact parameter& abs(dz(pv))  & $ \le 1$\\\hline 
+Isolation Barrel& (dr03HcalTowerSumEt + max( 0., dr03EcalRecHitSumEt-1. ) + dr03TkSumPt) / pt & $\le 0.15$\\
+Isolation Barrel& (dr03HcalTowerSumEt + dr03EcalRecHitSumEt + dr03TkSumPt) / pt & $\le 0.15$\\\hline 
+\end{tabular}
+    \end{center}
+    \end{table}
+
+\subsection{Light lepton isolation}\label{sec:isolation}
+
+A combined relative lepton isolation has been used. The isolation uses information from both calorimeters and the silicon tracker. The isolation value ($Iso$) is given by the ratio of the sum of all $p_T$ objects within a cone in $\eta$-$\phi$-space of $\Delta R = \sqrt{\Delta \eta^2 + \Delta \phi^2 } < 0.4$ around the lepton and the lepton $p_T$. It has been pre-calculated in PAT using
+\be
+    Iso = \frac{ \displaystyle \left[ \sum_{photons}{p_{T}}+\sum_{neutral \; hadrons}{p_{T}}+\sum_{charged \; hadrons} {p_{T}}\right]_{dR<0.4}}{p_T}
+\ee
+where the first sum runs over the transverse momentum of all particle flow photons, the second sum runs over the transverse momentum of all neutral hadrons and the third sum runs over the transverse momentum deposited as charged hadrons within the cone.
+
+
+The isolation for prompt muons obtained from the sPlot technique (Sec.\ref{sec:splot}) is shown Figure~\ref{fig:muon_iso} and the cut value is chosen to be $Iso<0.2$. The distribution for electrons is displayed in Figure~\ref{fig:electron_iso} and the cut is placed at $Iso<0.2$ to obtain a similar rejection and efficiency for electrons and muons. The background shapes evaluated from data are discussed in Sec.~\ref{sec:fakes}.
+
+\subsection{Taus}\label{sec:taus}
+
+\TODO: Matthias tau selection
+
+\subsection{Jets and missing transverse energy}\label{sec:jet}
+
+The anti-kt jet algorithm~\cite{antiKT} with a cone size of 0.5 in $\Delta R$ is used. 
+Jets are clustered from all reconstructed particle flow particles.
+We remove jets that are within $\Delta R < 0.4$ to a lepton passing our
+full lepton selection. Thus we obtain fully lepton cleaned jets in our final selection.
+The jets are corrected up to level 3 using MC jet energy corrections~\cite{mcjetcorrections}
+from the Summer11 (GlobalTag: GR\_R\_42\_V12, START42\_V12) production. 
+To correct for PileUp the L1FastJet subtraction using the latest JetMET
+prescription is applied.
+
+Each corrected jet is required to have a $p_T$ above 30 GeV and 
+the jet axis has to be within $|\eta| < 3$. This relatively tight $\eta$ cut is used 
+to be able to include tracker information in the jet identification for a large part of the $\eta$ acceptance and 
+not to rely on the hadronic calorimeter only. 
+Thus, one is able to fully profit from the particle flow algorithm.
+Each jet has to pass the "FIRSTDATA" "LOOSE" Particle Flow Jet ID criteria, which
+are used to suppress fake, noise, and badly reconstructed jets, while
+still retaining as much real jets as possible~\cite{pfjetid}.
+
+The missing transverse energy (MET) is based on the sum of all particle 
+momenta reconstructed using the particle flow event reconstruction (pfMET).
+
+\subsection{Trigger}\label{sec:trigger}
+
+We collect events using three different trigger streams:
+\begin{itemize}
+\item (20,10) GeV $ee$, $e\mu$, $\mu\mu$ events are selected using the lepton trigger selection.
+\item (10,10), (10,5), (5,5) GeV $ee$, $e\mu$, $\mu\mu$ events are selected using the lepton \HT cross object trigger selection.
+\item (5,15), (10,15), (15,15) GeV $\mu\tau$, $e\tau$, $\tau\tau$ events are selected using the tau trigger selection.
+\end{itemize}
+
+\subsubsection{Lepton trigger selection}
+To collect events for the (20,10) GeV di-lepton selection
+we use an OR of the following double lepton high level trigger (HLT) paths
+\begin{itemize}
+\item HLT\_Ele17\_CaloIdL\_CaloIsoVL\_Ele8\_CaloIdL\_CaloIsoVL\_v* 
+\item HLT\_Ele17\_CaloIdT\_TrkIdVL\_CaloIsoVL\_TrkIsoVL\_Ele8\_CaloIdT\_TrkIdVL\_CaloIsoVL\_TrkIsoVL\_v* 
+\item HLT\_Mu8\_Ele17\_CaloIdL\_v* 
+\item HLT\_Mu17\_Ele8\_CaloIdL\_v* 
+\item HLT\_Mu10\_Ele10\_CaloIdL\_v* 
+\item HLT\_DoubleMu6* 
+\item HLT\_DoubleMu7\_v* 
+\item HLT\_Mu13\_Mu7\_v*
+\end{itemize}
+We check that the prescale of each trigger is set to one
+for all run ranges.
+
+We measure the eficiency in an orthogonal event selection
+using events triggered by purely hadronic triggers.
+
+%\begin{figure}[hbtp]
+%  \subfigure[]{\label{fig:htTrigger}\includegraphics[width=0.79\textwidth]{HTTriggerTurnOn.pdf}}\hfill
+%  \caption{\HT-trigger turn-on curve with respect to our definition of \HT measured on a muon triggered control sample. The slow turn-on comes from the much better resolution of particle flow jets compared to uncorrected calo jets used in the trigger.}
+%\end{figure}
+
+\begin{table}[hbtp]
+\caption{Double lepton high level trigger efficiencies. \label{tab:Trigger}}
+\begin{center}
+\begin{tabular}{|l||c|c|c|} \hline
+HLT path    &   Thresh. [GeV]   &   Pathname        & $\epsilon$\\\hline \hline
+\HT &   100 & HLT\_HT100U    &$99.8\pm0.1$\% \\\hline  
+\HT &   140 & HLT\_HT140U    &$99.7\pm0.1$\% \\\hline  
+\HT &   150 & HLT\_HT150U    &$99.7\pm0.1$\% \\\hline  
+\end{tabular}
+\end{center}
+\end{table}
+
+The measured efficiencies are listed in Table~\ref{tab:Trigger}. 
+We obtain an efficiency of $(99.7\pm0.1)$\%, ($(99.7\pm0.1)$\%, $(99.7\pm0.1)$\%) 
+for the $ee$ ($e\mu$, $\mu\mu$) trigger with respect to the final 
+di-lepton selection, respectively.
+
+\subsubsection{Lepton $H_T$ cross trigger trigger selection}
+To collect events for low lepton $p_T$ range ($e$ 10, $\mu$ 5) GeV di-lepton plus
+$\HT$ cross-object triggers are used.
+We use an OR of the following double lepton \HT HLT paths
+\begin{itemize}
+\item HLT\_DoubleEle8\_CaloIdL\_TrkIdVL\_HT160\_v* 
+\item HLT\_DoubleEle8\_CaloIdL\_TrkIdVL\_HT150\_v* 
+\item HLT\_DoubleMu3\_HT160\_v* 
+\item HLT\_DoubleMu3\_HT150\_v* 
+\item HLT\_Mu3\_Ele8\_CaloIdL\_TrkIdVL\_HT160\_v* 
+\item HLT\_Mu3\_Ele8\_CaloIdL\_TrkIdVL\_HT150\_v*
+\end{itemize}
+We check that the prescale of each trigger is set to one
+for all run ranges.
+
+We measure the leptonic eficiency in event selection
+using events triggered by purely hadronic (\HT) triggers,
+while the hadronic efficiency is measured using
+events collected by di-lepton triggers. We assume
+no correlation between the hadronic and leptonic
+part of the trigger and give the total efficiency
+as a product of both.
+
+\begin{table}[hbtp]
+\caption{Double lepton \HT cross object trigger high level trigger efficiencies. \label{tab:TriggerHT}}
+\begin{center}
+\begin{tabular}{|l||c|c|c|} \hline
+HLT path    &   Thresh. [GeV]   &   Pathname        & $\epsilon$\\\hline \hline
+\HT &   100 & HLT\_HT100U    &$99.8\pm0.1$\% \\\hline  
+\HT &   140 & HLT\_HT140U    &$99.7\pm0.1$\% \\\hline  
+\HT &   150 & HLT\_HT150U    &$99.7\pm0.1$\% \\\hline  
+\end{tabular}
+\end{center}
+\end{table}
+
+The measured efficiencies are listed in Table~\ref{tab:TriggerHT}. 
+We obtain an efficiency of $(99.7\pm0.1)$\%, ($(99.7\pm0.1)$\%, $(99.7\pm0.1)$\%) 
+for the $ee$ ($e\mu$, $\mu\mu$) trigger with respect to the final 
+di-lepton selection, respectively.
+
+\subsubsection{Tau trigger selection}
+To collect event including taus in the final state
+we use an OR of the following double lepton high level trigger (HLT) paths
+\begin{itemize}
+\item \TODO tau trigger selection
+\end{itemize}
+We check that the prescale of each trigger is set to one
+for all run ranges.
+
+We measure the eficiency in an orthogonal event selection
+using events triggered by purely hadronic triggers.
+
+\begin{table}[hbtp]
+\caption{Tau high level trigger efficiencies. \label{tab:TriggerTau}}
+\begin{center}
+\begin{tabular}{|l||c|c|c|} \hline
+HLT path    &   Thresh. [GeV]   &   Pathname        & $\epsilon$\\\hline \hline
+\HT &   100 & HLT\_HT100U    &$99.8\pm0.1$\% \\\hline  
+\HT &   140 & HLT\_HT140U    &$99.7\pm0.1$\% \\\hline  
+\HT &   150 & HLT\_HT150U    &$99.7\pm0.1$\% \\\hline  
+\end{tabular}
+\end{center}
+\end{table}
+
+The measured efficiencies are listed in Table~\ref{tab:TriggerTau}. 
+We obtain an efficiency of $(99.7\pm0.1)$\%, ($(99.7\pm0.1)$\%, $(99.7\pm0.1)$\%) 
+for the $ee$ ($e\mu$, $\mu\mu$) trigger with respect to the final 
+di-lepton selection, respectively.

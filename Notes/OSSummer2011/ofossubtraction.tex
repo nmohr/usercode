@@ -1,0 +1,75 @@
+\section{Background prediction methos}
+
+\subsection{Different flavour subtraction} \label{sec:ofossubtraction}
+Since the signal region is expected to be absolutely 
+dominated by $t\bar{t}$-production we use
+the opposite flavour subtraction to predict
+backgrounds where uncorrelated leptons are being produced.
+It relies only on the knowledge of the ratio
+of electron to muon reconstruction efficiency $r_{e\mu}$,
+which we derive in Sec.~\ref{sec:eff}.
+
+Under the assumption of lepton unversality
+The following two formulas hold for any background
+where di-leptons are being produced uncorrelated 
+(e.g. top-pairs events, $Z \rightarrow \tau^{+} \tau{-} \rightarrow 
+l^{+} \l^-$, $WW$-production):
+$$
+n_{ee} = \frac12n_{e\mu}r_{\mu{}e}, \quad n_{\mu\mu} = \frac12\frac{n_{e\mu}}{r_{\mu{}e}}.
+$$
+A closure test of the method has been performed
+using a simulated top-pair sample and
+we observe a good agreement between prediction and MC truth:
+$$
+n_{ee} = 16.9 \pm 2.8 (\textnormal{stat.}) \; \textnormal{ (16.2 MC)}, \quad n_{\mu\mu} = 19.8 \pm 3.3 (\textnormal{stat.}) \; \textnormal{ (21.5 MC)}.
+$$
+
+
+\subsection{Control Region}
+
+To gain confidence in the performance of this technique we wish to test it on a high statistic sample, dominated by 
+$t\bar{t}$, as is our expected signal region is. To do this, we are required to use the leptonic trigger sample, 
+described in~\cite{avi} including the lepton $p_T$ thresholds of 20 (10)~GeV, 
+since we need to lower the $H_T$ requirement inherent in the hadronic trigger sample. Using 
+this sample our control region is defined by:  $100 < H_T < 350$~GeV and $\MET>80$~GeV,
+where we expect almost no Z+Jets contribution anymore and are dominated by $t\bar{t}$.
+The control region is disjunct from the signal region, however it also suffers,
+from potential signal contamination, in case of a very soft \MET spectrum of the new physics.
+The distribution of the events in the invariant mass distribution split by lepton flavour combinations
+is shown in Fig.~\ref{fig:control_InvMass}.
+
+In this region we observe $26$ opposite flavour opposite sign candidates and
+subtract $1.0\pm0.5$ predicted fake events. Therefore we obtain $25.0\pm0.5$ $t\bar{t}$-
+like candidate events, which we use to obtain a prediction for the same flavour combinations
+using the ratio of Tab.~\label{tab:tnp_eff}.
+
+Table~\ref{tab:OFexpect} shows the number of expected SM background events in the control region $100 < H_T < 350$~GeV 
+and $\MET>80$~GeV, as well as the prediction from the background estimation techniques, for an integrated
+luminosity of 35~pb${}^{-1}$. We observe a good agreement between prediction and observation.
+
+\begin{table}[hbt]
+\begin{center}
+\caption{\label{tab:OFexpect}Number of predicted and observed events in the control region, defined as: $100 < H_T < 350$~GeV and $\met > 80$~GeV.}
+\begin{tabular}{l|cc}
+\hline
+                       & \multicolumn{2}{c}{Control Region}               \\
+\hline 
+Process                & $ee$          & $\mu\mu$        \\
+\hline
+$t\bar{t}$ from $e\mu$ & $11.7\pm 2.4$ & $13.4\pm 2.8$   \\
+Fake leptons           & $0.5\pm 0.3$  & $0.4\pm0.2$                  \\
+\hline
+Total predicted        & $12.2\pm 2.4$ & $13.8 \pm 2.8$  \\
+\hline\hline
+Total observed         & $10$          & $15$          \\
+\hline \hline
+SM MC         & $8.4\pm 0.2$  & $10.5 \pm 0.3$    \\
+LM0                    &  $3.7\pm0.2$  & $4.2\pm0.2$     \\
+LM1                    &  $0.5\pm0.1$  & $0.7\pm0.1$     \\
+
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
