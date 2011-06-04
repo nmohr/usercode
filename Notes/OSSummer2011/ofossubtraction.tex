@@ -1,10 +1,21 @@
-\section{Background prediction methos}
+\section{Background prediction methods}
+
+We use three background prediction methods to
+estimate all backgrounds in the signal regions.
+Events where a fake or heavy flavour lepton
+fakes the signature of a di-lepton event (i.e. W+jets, Single Top,
+QCD) are estimated using the fake rate method 
+presented in Sec.~??.
+Top pair, $WW$ and $Z \rightarrow \tau \tau$ events
+are estimated from the $e\mu$-control sample (Sec.~\ref{sec:ofossubtraction}).
+$Z\rightarrow ll$ ($l=e,\mu$) is estimated by
+extrapolating in \HT and \MET.
 
 \subsection{Different flavour subtraction} \label{sec:ofossubtraction}
-Since the signal region is expected to be absolutely 
+Since all signal regions are expected to be  
 dominated by $t\bar{t}$-production we use
-the opposite flavour subtraction to predict
-backgrounds where uncorrelated leptons are being produced.
+the different flavour control sample ($e\mu$) to predict
+backgrounds in which leptons uncorrelated in flavour are being produced.
 It relies only on the knowledge of the ratio
 of electron to muon reconstruction efficiency $r_{e\mu}$,
 which we derive in Sec.~\ref{sec:eff}.
@@ -18,41 +29,156 @@ $$
 n_{ee} = \frac12n_{e\mu}r_{\mu{}e}, \quad n_{\mu\mu} = \frac12\frac{n_{e\mu}}{r_{\mu{}e}}.
 $$
 A closure test of the method has been performed
-using a simulated top-pair sample and
+using a simulated top-pair sample (including pileup) and
 we observe a good agreement between prediction and MC truth:
 $$
-n_{ee} = 16.9 \pm 2.8 (\textnormal{stat.}) \; \textnormal{ (16.2 MC)}, \quad n_{\mu\mu} = 19.8 \pm 3.3 (\textnormal{stat.}) \; \textnormal{ (21.5 MC)}.
+n_{ee} = ??.9 \pm 2.8 (\textnormal{stat.}) \; \textnormal{ (??.2 MC)}, 
+\quad n_{\mu\mu} = ??.8 \pm 3.3 (\textnormal{stat.}) \; \textnormal{ (??.5 MC)}.
 $$
 
+Later in this note we are only interested
+in an excess of $ee+\mu\mu$ and in this
+extrapolation the ratio largely cancels
+as long as the differences in lepton efficiencies are not
+large.
 
-\subsection{Control Region}
+\subsection{Z boson prediction} \label{sec:zprediction}
 
-To gain confidence in the performance of this technique we wish to test it on a high statistic sample, dominated by 
-$t\bar{t}$, as is our expected signal region is. To do this, we are required to use the leptonic trigger sample, 
-described in~\cite{avi} including the lepton $p_T$ thresholds of 20 (10)~GeV, 
-since we need to lower the $H_T$ requirement inherent in the hadronic trigger sample. Using 
-this sample our control region is defined by:  $100 < H_T < 350$~GeV and $\MET>80$~GeV,
-where we expect almost no Z+Jets contribution anymore and are dominated by $t\bar{t}$.
-The control region is disjunct from the signal region, however it also suffers,
-from potential signal contamination, in case of a very soft \MET spectrum of the new physics.
-The distribution of the events in the invariant mass distribution split by lepton flavour combinations
-is shown in Fig.~\ref{fig:control_InvMass}.
+Backgrounds containing a real di-lepton pair of same flavour ($ee$ and $\mu\mu$)
+are estimated by a partly data-driven extrapolation in \HT and \MET.
+We start by extraction of the Z yield using a fit to the invariant
+mass distribution in the preselection region ($\HT > 100$~GeV and $\MET>100$~GeV).
+From the fit we extract a yield of 
+\be
+    n_{Z,control} = 5.4 \pm 3.4_{stat}
+\ee
+in $ee+\mu\mu$ modes. This yield is used
+to derive a prediction in the signal regions
+\be
+    n_{Z,sig} = \epsilon_{\HT} \epsilon_{\MET} n_{Z,control},
+\ee
+where $\epsilon_{\HT}$ and $\epsilon_{\MET}$ describe
+an extrapolation in \HT and \MET respectively.
 
-In this region we observe $26$ opposite flavour opposite sign candidates and
-subtract $1.0\pm0.5$ predicted fake events. Therefore we obtain $25.0\pm0.5$ $t\bar{t}$-
-like candidate events, which we use to obtain a prediction for the same flavour combinations
-using the ratio of Tab.~\label{tab:tnp_eff}.
+The extrapolation in \HT is performed fully data-driven
+by fitting the Z yield without \MET cut. For this
+we select events for \HT>100~GeV, \HT>250~GeV, \HT>350~GeV
+and \HT>600~GeV, which correspond to the \HT tresholds
+used in various signal regions.
+By using the ratio of the yields
+in these regions we drive the efficiency of the \HT cut
+\be
+    \epsilon_{\HT} = \frac{n_{Z,\HT,signal}}{n_{Z,\HT,control}}.
+\ee
 
-Table~\ref{tab:OFexpect} shows the number of expected SM background events in the control region $100 < H_T < 350$~GeV 
-and $\MET>80$~GeV, as well as the prediction from the background estimation techniques, for an integrated
-luminosity of 35~pb${}^{-1}$. We observe a good agreement between prediction and observation.
+The yields and efficiencies for all regions are summarised in Tab.~\ref{zHTExtrap}.
+
+\begin{table}[hbtp]
+\caption{Z yield in. \label{tab:zHTExtrap}}
+\begin{center}
+\begin{tabular}{l||c|c} \hline
+\HT thresh. [GeV]   & Yield $n_{Z}$ &   $\epsilon_{\HT}$  \\\hline \hline
+100 &  $3191\pm??$   &$1.$ \\
+250 &  $158\pm??$   &$??.8\pm0.1$ \\
+350 &  $51\pm??$   &$??.8\pm0.1$ \\
+600 &  $21\pm??$   &$??\pm0.1$ \\\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+The extrapolation in \MET is performed 
+from simulation after applying the \MET
+and \HT cut of the preselection.
+We find that suppression in \MET
+is reduced after application of a higher
+\HT selection, but the simulation is statistically
+limited in this region.
+The systematic uncertainty on this extrapolation
+is assumed to be 50\%.
+
+We derive a extrapolation factor of
+\be
+    \epsilon_{\MET,100 \rightarrow 150} = 0.5 \pm 0.25
+\ee
+for a \HT threshold of 250~GeV and 350~GeV.
+For higher \MET selections no events are
+selected according to simulation, 
+thus we derive an upper limit on the number 
+of events in that region.
+
+For all signal regions the expected Z yield
+is rather low, so that a large systematic uncertainty
+can be accommodated.
+
+\subsection{Preselection region}
+
+In the pre-selection region (\HT>100~GeV and \MET > 100~GeV)
+we perform a full shape analysis of the different ($e\mu$) an same flavour ($ee$, $\mu\mu$)
+lepton pairs.
+
+A data to MC comparison of all same flavour events
+is shown in Fig.~\ref{fig:sfosPre} for all same flavour
+and in Fig.~\ref{fig:ofosPre} for the different flavour
+pairs. It is seen that data and simulation do agree relatively good.
+
+\begin{figure}[hbtp]
+  \subfigure[]{\label{fig:sfosPre}\includegraphics[width=0.49\textwidth]{Summer11_07_MC_pfLeptSusyCuts_Data_iOSSF_EEMuMu.pdf}}\hfill
+  \subfigure[]{\label{fig:ofosPre}\includegraphics[width=0.49\textwidth]{Summer11_07_MC_pfLeptSusyCuts_Data_iOSOF_EMu.pdf}}\hfill
+  \caption{Data to MC comparison for events in the pre-selection region ($HT>100$~GeV, $\MET> 100$~GeV)
+  for an integrated luminosity of 204~\pbi. \subref{fig:sfosPre} shows the $ee+\mu\mu$-pairs and
+ \subref{fig:ofosPre} $e\mu$-pairs.}
+\end{figure}
+
+In this region we perform a full shape analysis
+of the same and different flavour lepton pairs.
+The fit of the $e\mu$ lepton pairs is shown
+in Fig.~\ref{fig:ofosFitPre}.
+This background is described by 
+\begin{equation}\label{eq:fit_bkg}
+B(m_{ll}) = m_{ll}^{a} \cdot e^{-b\cdot m_{ll}}.
+\end{equation}
+The green band represents the statistical 
+uncertainty on the shape.
+
+The same flavour lepton pairs are fitted
+by the background shape from $e\mu$
+with the normalisation fixed within the 
+statistical plus systematical uncertainty
+from the $e\mu$-pairs.
+
+For a potential signal the an edge model
+is fitted and the Z contribution
+is modelled by a Breit-Wigner convoluted 
+with a Gaussian.
+
+The fit of the $ee+\mu\mu$ lepton pairs is shown
+in Fig.~\ref{fig:sfosFitPre}.
+
+\begin{figure}[hbtp]
+  \subfigure[]{\label{fig:sfosFitPre}\includegraphics[width=0.49\textwidth]{fit2011_AG_Data.pdf}}\hfill
+  \subfigure[]{\label{fig:ofosFitPre}\includegraphics[width=0.49\textwidth]{fit2011OFOS_AG_Data.pdf}}\hfill
+  \caption{Data to MC comparison for events in the pre-selection region ($HT>100$~GeV, $\MET> 100$~GeV)
+  for an integrated luminosity of 204~\pbi. \subref{fig:sfosPre} shows the $ee+\mu\mu$-pairs and
+ \subref{fig:ofosPre} $e\mu$-pairs.}
+\end{figure}
+
+It is seen that no significant contribution
+above the background is observed.
+
+\section{Signal regions}
+
+In Tab.~\ref{tab:predict2010} the yields and the background predictions
+from the three methods are listed for the signal region used for the analysis
+of the 2010 data. Good agreement between prediction and
+observation is seen.
 
 \begin{table}[hbt]
 \begin{center}
-\caption{\label{tab:OFexpect}Number of predicted and observed events in the control region, defined as: $100 < H_T < 350$~GeV and $\met > 80$~GeV.}
+\caption{\label{tab:predict2010}Number of predicted and observed events in the 2010 signal region, 
+    defined as: $H_T > 350$~GeV and $\met > 150$~GeV.}
 \begin{tabular}{l|cc}
 \hline
-                       & \multicolumn{2}{c}{Control Region}               \\
+                       & \multicolumn{2}{c}{2010 signal region}               \\
 \hline 
 Process                & $ee$          & $\mu\mu$        \\
 \hline
@@ -71,5 +197,68 @@ LM1                    &  $0.5\pm0.1$  & $0.7\pm0.1$     \\
 \end{tabular}
 \end{center}
 \end{table}
+
+
+In Tab.~\ref{tab:predictHighMET} the yields and the background predictions
+from the three methods are listed for the signal region defined by a tight
+\MET selection. We observe good agreement between prediction
+and observation.
+
+\begin{table}[hbt]
+\begin{center}
+\caption{\label{tab:predictHighMET}Number of predicted and observed events in the high \MET signal region, 
+    defined as: $H_T > 250$~GeV and $\met > 250$~GeV.}
+\begin{tabular}{l|cc}
+\hline
+                       & \multicolumn{2}{c}{High \MET Region}               \\
+\hline 
+Process                & $ee$          & $\mu\mu$        \\
+\hline
+$t\bar{t}$ from $e\mu$ & $11.7\pm 2.4$ & $13.4\pm 2.8$   \\
+Fake leptons           & $0.5\pm 0.3$  & $0.4\pm0.2$                  \\
+\hline
+Total predicted        & $12.2\pm 2.4$ & $13.8 \pm 2.8$  \\
+\hline\hline
+Total observed         & $10$          & $15$          \\
+\hline \hline
+SM MC         & $8.4\pm 0.2$  & $10.5 \pm 0.3$    \\
+LM0                    &  $3.7\pm0.2$  & $4.2\pm0.2$     \\
+LM1                    &  $0.5\pm0.1$  & $0.7\pm0.1$     \\
+
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Tab.~\ref{tab:predictHighMET} compares the yields and the background predictions
+from the three background prediction methods for the signal region defined by a tight
+\HT selection. A good agreement between prediction and observation can be seen.
+
+\begin{table}[hbt]
+\begin{center}
+\caption{\label{tab:predictHighMET}Number of predicted and observed events in the high \HT signal region, 
+    defined as: $H_T > 600$~GeV and $\met > 100$~GeV.}
+\begin{tabular}{l|cc}
+\hline
+                       & \multicolumn{2}{c}{High \HT region}               \\
+\hline 
+Process                & $ee$          & $\mu\mu$        \\
+\hline
+$t\bar{t}$ from $e\mu$ & $11.7\pm 2.4$ & $13.4\pm 2.8$   \\
+Fake leptons           & $0.5\pm 0.3$  & $0.4\pm0.2$                  \\
+\hline
+Total predicted        & $12.2\pm 2.4$ & $13.8 \pm 2.8$  \\
+\hline\hline
+Total observed         & $10$          & $15$          \\
+\hline \hline
+SM MC         & $8.4\pm 0.2$  & $10.5 \pm 0.3$    \\
+LM0                    &  $3.7\pm0.2$  & $4.2\pm0.2$     \\
+LM1                    &  $0.5\pm0.1$  & $0.7\pm0.1$     \\
+
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
 
 
