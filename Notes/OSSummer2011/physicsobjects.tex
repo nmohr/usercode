@@ -205,7 +205,14 @@ The isolation for prompt muons obtained from the sPlot technique (Sec.\ref{sec:s
 
 \subsection{Taus}\label{sec:taus}
 
-\TODO: Matthias tau selection
+\begin{itemize}
+\item $p_T > 20$ GeV
+\item $|\eta| < 2.3$
+\item charge == 1
+\item muon and electron discrimination
+\item isolation by leading pion
+\item TaNC $1.0\%$ WP
+\end{itemize}
 
 \subsection{Jets and missing transverse energy}\label{sec:jet}
 
@@ -236,7 +243,8 @@ We collect events using three different trigger streams:
 \begin{itemize}
 \item (20,10) GeV $ee$, $e\mu$, $\mu\mu$ events are selected using the lepton trigger selection.
 \item (10,10), (10,5), (5,5) GeV $ee$, $e\mu$, $\mu\mu$ events are selected using the lepton \HT cross object trigger selection.
-\item (5,15), (10,15), (15,15) GeV $\mu\tau$, $e\tau$, $\tau\tau$ events are selected using the tau trigger selection.
+%\item (5,15), (10,15), (15,15) GeV $\mu\tau$, $e\tau$, $\tau\tau$ events are selected using the tau trigger selection.
+\item (20,20), (20,20), (20,20) GeV $\mu\tau$, $e\tau$, $\tau\tau$ events are selected using the leptonic tau trigger selection.
 \end{itemize}
 
 \subsubsection{Lepton trigger selection}
@@ -324,8 +332,16 @@ di-lepton selection, respectively.
 To collect event including taus in the final state
 we use an OR of the following double lepton high level trigger (HLT) paths
 \begin{itemize}
-\item \TODO tau trigger selection
+\item HLT\_Ele15\_CaloIdVT\_TrkIdT\_LooseIsoPFTau15\_v*
+\item HLT\_Ele15\_CaloIdVT\_CaloIsoT\_TrkIdT\_TrkIsoT\_LooseIsoPFTau15\_v*
+%future:
+%\item  HLT_Ele18_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_LooseIsoPFTau20_v*
+\item HLT\_IsoMu12\_LooseIsoPFTau10\_v*
+\item HLT\_IsoMu15\_LooseIsoPFTau15\_v* 
+\item HLT\_HT200\_DoubleLooseIsoPFTau10\_Trk3\_PFMHT35\_v*
+\item HLT\_HT250\_DoubleIsoPFTau10\_Trk3\_PFMHT35\_v*
 \end{itemize}
+
 We check that the prescale of each trigger is set to one
 for all run ranges.
 
