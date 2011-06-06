@@ -7,26 +7,34 @@
 \contentsline {subsection}{\numberline {4.3}Simulated datasets}{5}
 \contentsline {subsection}{\numberline {4.4}Common event selection}{5}
 \contentsline {subsection}{\numberline {4.5}Muons}{5}
-\contentsline {subsection}{\numberline {4.6}Electrons}{5}
+\contentsline {subsection}{\numberline {4.6}Electrons}{6}
 \contentsline {subsection}{\numberline {4.7}Light lepton isolation}{6}
-\contentsline {subsection}{\numberline {4.8}Taus}{6}
+\contentsline {subsection}{\numberline {4.8}Taus}{7}
 \contentsline {subsection}{\numberline {4.9}Jets and missing transverse energy}{7}
 \contentsline {subsection}{\numberline {4.10}Trigger}{7}
 \contentsline {subsubsection}{\numberline {4.10.1}Lepton trigger selection}{7}
 \contentsline {subsubsection}{\numberline {4.10.2}Lepton $H_T$ cross trigger trigger selection}{8}
-\contentsline {subsubsection}{\numberline {4.10.3}Tau trigger selection}{8}
-\contentsline {section}{\numberline {5}Efficiency for electrons and muons}{8}
+\contentsline {subsubsection}{\numberline {4.10.3}Tau trigger selection}{9}
+\contentsline {section}{\numberline {5}Efficiency for electrons and muons}{9}
 \contentsline {section}{\numberline {6}Event selection}{9}
 \contentsline {subsection}{\numberline {6.1}Preselection}{10}
 \contentsline {subsection}{\numberline {6.2}Definition of the signal regions}{10}
-\contentsline {subsubsection}{\numberline {6.2.1}2010 signal region}{10}
-\contentsline {subsubsection}{\numberline {6.2.2}High \ensuremath {H_T\nobreakspace {}}signal region}{10}
-\contentsline {subsubsection}{\numberline {6.2.3}High \ensuremath {\displaystyle {\not } E_T\nobreakspace {}}signal region}{11}
-\contentsline {section}{\numberline {7}Background prediction methods}{11}
-\contentsline {subsection}{\numberline {7.1}Different flavour subtraction}{12}
-\contentsline {subsection}{\numberline {7.2}Z boson prediction}{13}
-\contentsline {subsection}{\numberline {7.3}Preselection region}{14}
-\contentsline {section}{\numberline {8}Results}{14}
-\contentsline {section}{\numberline {9}Limit}{16}
-\contentsline {section}{\numberline {10}Conclusion}{17}
-\contentsline {section}{\numberline {11}Acknowledgements}{17}
+\contentsline {subsubsection}{\numberline {6.2.1}2010 signal region}{11}
+\contentsline {subsubsection}{\numberline {6.2.2}High \ensuremath {H_T\nobreakspace {}}signal region}{11}
+\contentsline {subsubsection}{\numberline {6.2.3}High \ensuremath {\displaystyle {\not } E_T\nobreakspace {}}signal region}{12}
+\contentsline {section}{\numberline {7}Background prediction methods}{12}
+\contentsline {subsection}{\numberline {7.1}Different flavour subtraction}{13}
+\contentsline {subsection}{\numberline {7.2}Z boson prediction}{14}
+\contentsline {subsection}{\numberline {7.3}Preselection region}{15}
+\contentsline {subsection}{\numberline {7.4}Fake background measurement}{15}
+\contentsline {section}{\numberline {8}Results}{17}
+\contentsline {section}{\numberline {9}Extention to $\tau $ Channels}{17}
+\contentsline {subsection}{\numberline {9.1}$\tau $ Id}{18}
+\contentsline {subsection}{\numberline {9.2}Preduction of missidentified Quark/Gluon Jets}{18}
+\contentsline {subsection}{\numberline {9.3}Results}{18}
+\contentsline {subsubsection}{\numberline {9.3.1}2010 signal region}{18}
+\contentsline {subsubsection}{\numberline {9.3.2}High \ensuremath {H_T\nobreakspace {}}signal region}{18}
+\contentsline {subsubsection}{\numberline {9.3.3}High \ensuremath {\displaystyle {\not } E_T\nobreakspace {}}signal region}{23}
+\contentsline {section}{\numberline {10}Limit}{23}
+\contentsline {section}{\numberline {11}Conclusion}{23}
+\contentsline {section}{\numberline {12}Acknowledgements}{23}

@@ -20,7 +20,7 @@ It relies only on the knowledge of the ratio
 of electron to muon reconstruction efficiency $r_{e\mu}$,
 which we derive in Sec.~\ref{sec:eff}.
 
-Under the assumption of lepton unversality
+Under the assumption of lepton universality
 The following two formulas hold for any background
 where di-leptons are being produced uncorrelated 
 (e.g. top-pairs events, $Z \rightarrow \tau^{+} \tau{-} \rightarrow 
@@ -41,6 +41,16 @@ in an excess of $ee+\mu\mu$ and in this
 extrapolation the ratio largely cancels
 as long as the differences in lepton efficiencies are not
 large.
+
+One can define the quantity $S$
+\be
+    S = r_{\mu e} n_{ee} - n_{e\mu} + \frac{1}{r_{\mu e}} n_{\mu\mu}
+\ee
+to measure the total flavour assymmetry. It is expected
+to be 0 for flavour symmetric processes,
+but becomes positive for processes with higher
+flavour correlated yield and negative for
+processes with higher $e\mu$ yield.
 
 \subsection{Z boson prediction} \label{sec:zprediction}
 
@@ -78,10 +88,10 @@ The yields and efficiencies for all regions are summarised in Tab.~\ref{zHTExtra
 \begin{center}
 \begin{tabular}{l||c|c} \hline
 \HT thresh. [GeV]   & Yield $n_{Z}$ &   $\epsilon_{\HT}$  \\\hline \hline
-100 &  $3191\pm??$   &$1.$ \\
-250 &  $158\pm??$   &$??.8\pm0.1$ \\
-350 &  $51\pm??$   &$??.8\pm0.1$ \\
-600 &  $21\pm??$   &$??\pm0.1$ \\\hline
+100 &  $3191\pm57$   &$1.$ \\
+250 &  $158\pm13$   &$0.050 \pm 0.0057$ \\
+350 &  $51\pm7$   &$0.016 \pm 0.0033$ \\
+600 &  $21\pm5$   &$0.0066\pm 0.0021$ \\\hline
 \end{tabular}
 \end{center}
 \end{table}
@@ -105,6 +115,11 @@ For higher \MET selections no events are
 selected according to simulation, 
 thus we derive an upper limit on the number 
 of events in that region.
+
+Please note that this factor can also be
+larger than one for a case where only
+the \HT but not the \MET cut is
+increased.
 
 For all signal regions the expected Z yield
 is rather low, so that a large systematic uncertainty
