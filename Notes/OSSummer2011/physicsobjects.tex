@@ -304,27 +304,31 @@ We check that the prescale of each trigger is set to one
 for all run ranges.
 
 We measure the leptonic eficiency in event selection
-using events triggered by purely hadronic (\HT) triggers,
-while the hadronic efficiency is measured using
+using events triggered by purely hadronic (\HT) triggers. Only triggers with an HT threshold of at least $160~\GeV$ are used to ensure that the hadronic threshold of the cross trigger is exceeded.
+The hadronic efficiency is measured using
 events collected by di-lepton triggers. We assume
 no correlation between the hadronic and leptonic
 part of the trigger and give the total efficiency
-as a product of both.
+as a product of both.\\
+\TODO: atm only efficiencies of lepton part!
 
 \begin{table}[hbtp]
 \caption{Double lepton \HT cross object trigger high level trigger efficiencies. \label{tab:TriggerHT}}
 \begin{center}
-\begin{tabular}{|l||c|c|c|} \hline
-HLT path    &   Thresh. [GeV]   &   Pathname        & $\epsilon$\\\hline \hline
-\HT &   100 & HLT\_HT100U    &$99.8\pm0.1$\% \\\hline  
-\HT &   140 & HLT\_HT140U    &$99.7\pm0.1$\% \\\hline  
-\HT &   150 & HLT\_HT150U    &$99.7\pm0.1$\% \\\hline  
+\begin{tabular}{|l||c|c|} \hline
+HLT path    &   Pathname        & $\epsilon$\\\hline \hline
+$ee + \HT$ &  HLT\_DoubleEle8\_CaloIdL\_TrkIdVL\_HT160\_v* & 93.85 \%\\
+ & or HLT\_DoubleEle8\_CaloIdL\_TrkIdVL\_HT150\_v* & \\\hline
+$e\mu + \HT$& HLT\_Mu3\_Ele8\_CaloIdL\_TrkIdVL\_HT160\_v*  & 93.94 \%\\
+ & or HLT\_Mu3\_Ele8\_CaloIdL\_TrkIdVL\_HT150\_v* & \\\hline
+$\mu\mu + \HT$& HLT\_DoubleMu3\_HT160\_v* & 86.36 \%\\
+ & or HLT\_DoubleMu3\_HT150\_v* & \\\hline
 \end{tabular}
 \end{center}
 \end{table}
 
 The measured efficiencies are listed in Table~\ref{tab:TriggerHT}. 
-We obtain an efficiency of $(99.7\pm0.1)$\%, ($(99.7\pm0.1)$\%, $(99.7\pm0.1)$\%) 
+We obtain an efficiency of $(XX)$\%, ($(XX)$\%, $(XX)$\%) 
 for the $ee$ ($e\mu$, $\mu\mu$) trigger with respect to the final 
 di-lepton selection, respectively.
 
