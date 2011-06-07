@@ -76,7 +76,7 @@ and the total integrated luminosity amounts to
 
 All simulated samples from CMSSW\_4\_2\_X are listed in Tab~\ref{tab:alldataset}. 
 Please note that for the
-final version the proper Madgraph samples will be used (as soon as they are 
+final version the Madgraph samples will be used (as soon as they are 
 available).
  
 \begin{table}[htdp]
@@ -84,18 +84,19 @@ available).
 \label{tab:alldataset}
 \begin{center}
 %\begin{small}
-\begin{tabular}{|l||c||c||c|} \hline
- 	DBS datasetpath 	&	No. events 		&   $\sigma_{LO}$ [pb] & Name\\ \hline \hline
-/LMX\_SUSY\_sftsht\_7TeV-pythia6/Fall10-START38\_V12-v1/AODSIM & 200000 & varies & SUSY LMX\\ \hline
-/TTJets\_TuneZ2\_7TeV-madgraph-tauola/Fall10-START38\_V12-v2/AODSIM& 1443404 & 90& tt+jets\\ \hline
-/DYJetsToLL\_TuneZ2\_M-50\_7TeV-madgraph-tauola/Fall10-START38\_V12-v2/AODSIM & 1084921 & 2350& Z+jets\\ \hline
-/WToENu\_TuneZ2\_7TeV-pythia6/Fall10-START38\_V12-v1/AODSIM & 189069 & 8057& W+jets\\ \hline
-/WToMuNu\_TuneZ2\_7TeV-pythia6/Fall10-START38\_V12-v1/AODSIM & 189069 & 8057& W+jets\\ \hline
-/WToTauNu\_TuneZ2\_7TeV-pythia6/Fall10-START38\_V12-v1/AODSIM & 189069 & 8057& W+jets\\ \hline
-/QCD\_TuneD6T\_HT-100To250\_7TeV-madgraph/Fall10-START38\_V12-v1/AODSIM & 10842371 & 7000000 & QCD\\ \hline
-/QCD\_TuneD6T\_HT-250To500\_7TeV-madgraph/Fall10-START38\_V12-v1/AODSIM & 4873036 & 171000 & QCD\\ \hline
-/QCD\_TuneD6T\_HT-500To1000\_7TeV-madgraph/Fall10-START38\_V12-v1/AODSIM & 4034762 & 520& QCD\\ \hline
-/QCD\_TuneD6T\_HT-1000ToInf\_7TeV-madgraph/Fall10-START38\_V12-v1/AODSIM & 1541261 & 83 & QCD\\ \hline
+\begin{tabular}{|l||c|c|} \hline
+ 	DBS datasetpath 		&   $\sigma$ [pb] & Name\\ \hline \hline
+%/LMX\_SUSY\_sftsht\_7TeV-pythia6/Fall10-START38\_V12-v1/AODSIM & 200000 & varies & SUSY LMX\\ \hline
+/TT\_TuneZ2\_7TeV-pythia6-tauola/Summer11-PU\_S3\_START42\_V11-v2/AODSIM & 168& tt+jets\\ \hline
+/DYToEE\_M-10To20\_TuneZ2\_7TeV-pythia6/Summer11-PU\_S3\_START42\_V11-v2/AODSIM& 3457& Z+jets\\ \hline
+/DYToMuMu\_M-10To20\_TuneZ2\_7TeV-pythia6/Summer11-PU\_S3\_START42\_V11-v2/AODSIM& 3457& Z+jets\\ \hline
+/DYToEE\_M-20\_TuneZ2\_7TeV-pythia6/Summer11-PU\_S3\_START42\_V11-v2/AODSIM& 1666& Z+jets\\ \hline
+/DYToMuMu\_M-20\_TuneZ2\_7TeV-pythia6/Summer11-PU\_S3\_START42\_V11-v2/AODSIM& 1666& Z+jets\\ \hline
+/DYToTauTau\_M-10To20\_TuneZ2\_7TeV-pythia6-tauola/Summer11-PU\_S3\_START42\_V11-v2/AODSIM& 3457& Z+tau tau\\ \hline
+/DYtoTauTau\_M-20\_TuneD6T\_7TeV-pythia6-tauola/Summer11-PU\_S3\_START42\_V11-v1/AODSIM& 1666& Z+tau tau\\ \hline
+/WToENu\_TuneZ2\_7TeV-pythia6/Summer11-PU\_S3\_START42\_V11-v2/AODSIM & 8057& W+jets\\ \hline
+/WToMuNu\_TuneZ2\_7TeV-pythia6/Summer11-PU\_S3\_START42\_V11-v2/AODSIM & 8057& W+jets\\ \hline
+/WToTauNu\_TuneZ2\_7TeV-pythia6-tauola/Summer11-PU\_S3\_START42\_V11-v2/AODSIM & 8057& W+jets\\ \hline
 %\multicolumn{3}{|l|}{$^{\dagger}$GEN-SIM-DIGI-RECO} \\ \hline
 \end{tabular}
 %\end{small}
@@ -194,14 +195,12 @@ Isolation Barrel& (dr03HcalTowerSumEt + dr03EcalRecHitSumEt + dr03TkSumPt) / pt 
 
 \subsection{Light lepton isolation}\label{sec:isolation}
 
-A combined relative lepton isolation has been used. The isolation uses information from both calorimeters and the silicon tracker. The isolation value ($Iso$) is given by the ratio of the sum of all $p_T$ objects within a cone in $\eta$-$\phi$-space of $\Delta R = \sqrt{\Delta \eta^2 + \Delta \phi^2 } < 0.4$ around the lepton and the lepton $p_T$. It has been pre-calculated in PAT using
+A combined relative lepton isolation has been used. The isolation uses information from both calorimeters and the silicon tracker. The isolation value ($Iso$) is given by the ratio of the sum of all $p_T$ objects within a cone in $\eta$-$\phi$-space of $\Delta R = \sqrt{\Delta \eta^2 + \Delta \phi^2 } < 0.3$ around the lepton and the lepton $p_T$. It has been pre-calculated in PAT using
 \be
-    Iso = \frac{ \displaystyle \left[ \sum_{photons}{p_{T}}+\sum_{neutral \; hadrons}{p_{T}}+\sum_{charged \; hadrons} {p_{T}}\right]_{dR<0.4}}{p_T}
+    Iso = \frac{ \displaystyle \left[ \sum_{Ecal}{E_{T}}+\sum_{HCAL}{E_{T}}+\sum_{Tracker} {p_{T}}\right]_{dR<0.3}}{p_T}
 \ee
-where the first sum runs over the transverse momentum of all particle flow photons, the second sum runs over the transverse momentum of all neutral hadrons and the third sum runs over the transverse momentum deposited as charged hadrons within the cone.
+where the first sum runs over the transverse momentum of all ECAL entries, the second sum runs over the transverse momentum of all HCAL entries and the third sum runs over the transverse momentum deposited as charged tracks within the cone. The cut value for both electrons and muons is placed at $Iso<0.15$.
 
-
-The isolation for prompt muons obtained from the sPlot technique (Sec.\ref{sec:splot}) is shown Figure~\ref{fig:muon_iso} and the cut value is chosen to be $Iso<0.2$. The distribution for electrons is displayed in Figure~\ref{fig:electron_iso} and the cut is placed at $Iso<0.2$ to obtain a similar rejection and efficiency for electrons and muons. The background shapes evaluated from data are discussed in Sec.~\ref{sec:fakes}.
 
 \subsection{Taus}\label{sec:taus}
 
@@ -263,7 +262,7 @@ we use an OR of the following double lepton high level trigger (HLT) paths
 We check that the prescale of each trigger is set to one
 for all run ranges.
 
-We measure the eficiency in an orthogonal event selection
+We measure the efficiency in an orthogonal event selection
 using events triggered by purely hadronic triggers.
 
 %\begin{figure}[hbtp]
@@ -274,17 +273,17 @@ using events triggered by purely hadronic triggers.
 \begin{table}[hbtp]
 \caption{Double lepton high level trigger efficiencies. \label{tab:Trigger}}
 \begin{center}
-\begin{tabular}{|l||c|c|c|} \hline
-HLT path    &   Thresh. [GeV]   &   Pathname        & $\epsilon$\\\hline \hline
-\HT &   100 & HLT\_HT100U    &$99.8\pm0.1$\% \\\hline  
-\HT &   140 & HLT\_HT140U    &$99.7\pm0.1$\% \\\hline  
-\HT &   150 & HLT\_HT150U    &$99.7\pm0.1$\% \\\hline  
+\begin{tabular}{|l||c|} \hline
+HLT path  & $\epsilon$\\\hline \hline
+$ee $  & $\approx 98$ \%\\ \hline
+$e\mu $  & $\approx 94$ \%\\ \hline
+$\mu\mu $  & $\approx 89$ \%\\ \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-The measured efficiencies are listed in Table~\ref{tab:Trigger}. 
-We obtain an efficiency of $(99.7\pm0.1)$\%, ($(99.7\pm0.1)$\%, $(99.7\pm0.1)$\%) 
+The estimated efficiencies are listed in Table~\ref{tab:Trigger}. 
+We obtain an efficiency of roughly $98$\%, ($94$\%, $89$\%) 
 for the $ee$ ($e\mu$, $\mu\mu$) trigger with respect to the final 
 di-lepton selection, respectively.
 
